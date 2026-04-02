@@ -1,0 +1,26 @@
+components:
+  schemas:
+    Status:
+      type: string
+      enum:
+        - success
+        - forbidden
+        - duplicate-record
+        - not-found
+        - invalid-request
+        - internal-error
+
+    BaseResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: "#/components/schemas/Status"
+
+    ResultResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            result:
+              type: boolean

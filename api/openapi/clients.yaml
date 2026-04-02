@@ -1,0 +1,279 @@
+components:
+  schemas:
+    Client:
+      type: object
+      required: [id, name, identityNumber, phone, active, creationDate]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    ClientCreateInput:
+      type: object
+      required: [name, identityNumber, phone]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+
+    ClientUpdateInput:
+      type: object
+      required: [clientId]
+      properties:
+        clientId:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        active:
+          type: boolean
+
+    ClientGetInput:
+      type: object
+      required: [clientIds]
+      properties:
+        clientIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, name, identityNumber, phone, active, creationDate]
+
+    ClientListInput:
+      type: object
+      required: [count, page]
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required: [query, searchIn]
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum: [name, identityNumber, phone]
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum: [name, creationDate]
+            order:
+              type: string
+              enum: [asc, desc]
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, name, identityNumber, phone, active, creationDate]
+
+    ClientDataResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Client"
+
+    ClientGetResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Client"
+
+    ClientListResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Client"
+            total:
+              type: integer
+            page:
+              type: integer
+
+  requestBodies:
+    ClientCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientCreateInput"
+
+    ClientUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientUpdateInput"
+
+    ClientDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [clientId]
+            properties:
+              clientId:
+                type: integer
+
+    ClientRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [clientId]
+            properties:
+              clientId:
+                type: integer
+
+    ClientGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientGetInput"
+
+    ClientListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClientListInput"
+
+paths:
+  create:
+    post:
+      operationId: createClient
+      requestBody:
+        $ref: "#/components/requestBodies/ClientCreateRequest"
+      responses:
+        "200":
+          description: Create client response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientDataResponse"
+
+  update:
+    post:
+      operationId: updateClient
+      requestBody:
+        $ref: "#/components/requestBodies/ClientUpdateRequest"
+      responses:
+        "200":
+          description: Update client response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientDataResponse"
+
+  delete:
+    post:
+      operationId: deleteClient
+      requestBody:
+        $ref: "#/components/requestBodies/ClientDeleteRequest"
+      responses:
+        "200":
+          description: Delete client response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  restore:
+    post:
+      operationId: restoreClient
+      requestBody:
+        $ref: "#/components/requestBodies/ClientRestoreRequest"
+      responses:
+        "200":
+          description: Restore client response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  get:
+    post:
+      operationId: getClients
+      requestBody:
+        $ref: "#/components/requestBodies/ClientGetRequest"
+      responses:
+        "200":
+          description: Get clients response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientGetResponse"
+
+  list:
+    post:
+      operationId: listClients
+      requestBody:
+        $ref: "#/components/requestBodies/ClientListRequest"
+      responses:
+        "200":
+          description: List clients response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientListResponse"

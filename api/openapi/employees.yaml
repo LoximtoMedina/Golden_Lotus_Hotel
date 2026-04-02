@@ -1,0 +1,325 @@
+components:
+  schemas:
+    Employee:
+      type: object
+      required: [id, identityNumber, phone, salary, name, email, role, active, creationDate]
+      properties:
+        id:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        role:
+          type: string
+          enum: [Manager, Receptionist, Housekeeper, Maintenance]
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    EmployeeCreateInput:
+      type: object
+      required: [identityNumber, phone, salary, name, email, accessKey, role]
+      properties:
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+        role:
+          type: string
+          enum: [Manager, Receptionist, Housekeeper, Maintenance]
+
+    EmployeeUpdateInput:
+      type: object
+      required: [employeeId]
+      properties:
+        employeeId:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+        role:
+          type: string
+          enum: [Manager, Receptionist, Housekeeper, Maintenance]
+        active:
+          type: boolean
+
+    EmployeeGetInput:
+      type: object
+      required: [employeeIds]
+      properties:
+        employeeIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, identityNumber, phone, salary, name, email, role, active, creationDate]
+
+    EmployeeListInput:
+      type: object
+      required: [count, page]
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required: [query, searchIn]
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum: [identityNumber, phone, name, email, role]
+        filters:
+          type: object
+          properties:
+            role:
+              type: string
+              enum: [Manager, Receptionist, Housekeeper, Maintenance]
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum: [name, role, creationDate]
+            order:
+              type: string
+              enum: [asc, desc]
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, identityNumber, phone, salary, name, email, role, active, creationDate]
+
+    EmployeeDataResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Employee"
+
+    EmployeeGetResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Employee"
+
+    EmployeeListResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Employee"
+            total:
+              type: integer
+            page:
+              type: integer
+
+  requestBodies:
+    EmployeeCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EmployeeCreateInput"
+
+    EmployeeUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EmployeeUpdateInput"
+
+    EmployeeDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [employeeId]
+            properties:
+              employeeId:
+                type: integer
+
+    EmployeeRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [employeeId]
+            properties:
+              employeeId:
+                type: integer
+
+    EmployeeGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EmployeeGetInput"
+
+    EmployeeListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EmployeeListInput"
+
+paths:
+  create:
+    post:
+      operationId: createEmployee
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeCreateRequest"
+      responses:
+        "200":
+          description: Create employee response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeDataResponse"
+
+  update:
+    post:
+      operationId: updateEmployee
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeUpdateRequest"
+      responses:
+        "200":
+          description: Update employee response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeDataResponse"
+
+  delete:
+    post:
+      operationId: deleteEmployee
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeDeleteRequest"
+      responses:
+        "200":
+          description: Delete employee response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  restore:
+    post:
+      operationId: restoreEmployee
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeRestoreRequest"
+      responses:
+        "200":
+          description: Restore employee response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  get:
+    post:
+      operationId: getEmployees
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeGetRequest"
+      responses:
+        "200":
+          description: Get employees response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeGetResponse"
+
+  list:
+    post:
+      operationId: listEmployees
+      requestBody:
+        $ref: "#/components/requestBodies/EmployeeListRequest"
+      responses:
+        "200":
+          description: List employees response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeListResponse"
