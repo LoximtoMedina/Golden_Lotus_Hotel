@@ -1,255 +1,109 @@
 openapi: 3.0.0
 info:
-  title: My App API
+  title: Golden Lotus Hotel API
   version: 1.0.0
+
+paths:
+  # Employees
+  /api/employees/create:
+    $ref: "./openapi/employees.yaml#/paths/create"
+
+  /api/employees/update:
+    $ref: "./openapi/employees.yaml#/paths/update"
+
+  /api/employees/delete:
+    $ref: "./openapi/employees.yaml#/paths/delete"
+
+  /api/employees/restore:
+    $ref: "./openapi/employees.yaml#/paths/restore"
+
+  /api/employees/get:
+    $ref: "./openapi/employees.yaml#/paths/get"
+
+  /api/employees/list:
+    $ref: "./openapi/employees.yaml#/paths/list"
+
+  # Clients
+  /api/clients/create:
+    $ref: "./openapi/clients.yaml#/paths/create"
+
+  /api/clients/update:
+    $ref: "./openapi/clients.yaml#/paths/update"
+
+  /api/clients/delete:
+    $ref: "./openapi/clients.yaml#/paths/delete"
+
+  /api/clients/restore:
+    $ref: "./openapi/clients.yaml#/paths/restore"
+
+  /api/clients/get:
+    $ref: "./openapi/clients.yaml#/paths/get"
+
+  /api/clients/list:
+    $ref: "./openapi/clients.yaml#/paths/list"
+
+  # Room Types
+  /api/room-types/create:
+    $ref: "./openapi/room-types.yaml#/paths/create"
+
+  /api/room-types/update:
+    $ref: "./openapi/room-types.yaml#/paths/update"
+
+  /api/room-types/delete:
+    $ref: "./openapi/room-types.yaml#/paths/delete"
+
+  /api/room-types/restore:
+    $ref: "./openapi/room-types.yaml#/paths/restore"
+
+  /api/room-types/get:
+    $ref: "./openapi/room-types.yaml#/paths/get"
+
+  /api/room-types/list:
+    $ref: "./openapi/room-types.yaml#/paths/list"
+
+  # Rooms
+  /api/rooms/create:
+    $ref: "./openapi/rooms.yaml#/paths/create"
+
+  /api/rooms/update:
+    $ref: "./openapi/rooms.yaml#/paths/update"
+
+  /api/rooms/delete:
+    $ref: "./openapi/rooms.yaml#/paths/delete"
+
+  /api/rooms/restore:
+    $ref: "./openapi/rooms.yaml#/paths/restore"
+
+  /api/rooms/get:
+    $ref: "./openapi/rooms.yaml#/paths/get"
+
+  /api/rooms/list:
+    $ref: "./openapi/rooms.yaml#/paths/list"
+
+  # Reservations
+  /api/reservations/create:
+    $ref: "./openapi/reservations.yaml#/paths/create"
+
+  /api/reservations/update:
+    $ref: "./openapi/reservations.yaml#/paths/update"
+
+  /api/reservations/delete:
+    $ref: "./openapi/reservations.yaml#/paths/delete"
+
+  /api/reservations/restore:
+    $ref: "./openapi/reservations.yaml#/paths/restore"
+
+  /api/reservations/get:
+    $ref: "./openapi/reservations.yaml#/paths/get"
+
+  /api/reservations/list:
+    $ref: "./openapi/reservations.yaml#/paths/list"
 
 components:
   schemas:
-    Client:
-      type: object
-      properties:
-        _id:
-          type: string
-        name:
-          type: string
-          minLength: 3
-          maxLength: 100
-        identityNumber:
-          type: string
-        phone:
-          type: string
-          minLength: 7
-          maxLength: 24
-        isActive:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-
-    # ── Reusable response wrappers ──────────────────────────
-    SuccessResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-
-    ListClientResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/Client"
-        total:
-          type: integer
-        page:
-          type: integer
-
-  requestBodies:
-    CreateClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [name, identityNumber]
-            properties:
-              name:
-                type: string
-                minLength: 3
-                maxLength: 100
-              identityNumber:
-                type: string
-              phone:
-                type: string
-                minLength: 7
-                maxLength: 24
-
-    GetClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [clientIds]
-            properties:
-              clientIds:
-                type: array
-                items:
-                  type: string
-              fields:
-                type: array
-                items:
-                  type: string
-                  enum: [_id, name, identityNumber, phone, isActive, createdAt]
-
-    ListClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [count, page]
-            properties:
-              count:
-                type: integer
-                minimum: 1
-              page:
-                type: integer
-                minimum: 0
-              fields:
-                type: array
-                items:
-                  type: string
-                  enum: [_id, name, identityNumber, phone, isActive, createdAt]
-              includeDeleted:
-                type: boolean
-              search:
-                type: object
-                properties:
-                  query:
-                    type: string
-                    maxLength: 100
-                  searchIn:
-                    type: array
-                    items:
-                      type: string
-                      enum: [name, identityNumber, phone]
-              sort:
-                type: object
-                properties:
-                  by:
-                    type: string
-                    enum: [name, createdAt, updatedAt]
-                  order:
-                    type: string
-                    enum: [asc, desc]
-
-    UpdateClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [clientId]
-            properties:
-              clientId:
-                type: string
-              name:
-                type: string
-                minLength: 3
-                maxLength: 100
-              identityNumber:
-                type: string
-              phone:
-                type: string
-                minLength: 7
-                maxLength: 24
-              isActive:
-                type: boolean
-
-    DeleteClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [clientId]
-            properties:
-              clientId:
-                type: string
-
-    RestoreClientRequest:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required: [clientId]
-            properties:
-              clientId:
-                type: string
-
-paths:
-  /clients/create:
-    post:
-      operationId: createClient
-      requestBody:
-        $ref: "#/components/requestBodies/CreateClientRequest"
-      responses:
-        "200":
-          description: Created client
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Client"
-
-  /clients/get:
-    post:
-      operationId: getClient
-      requestBody:
-        $ref: "#/components/requestBodies/GetClientRequest"
-      responses:
-        "200":
-          description: List of matching clients
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Client"
-
-  /clients/list:
-    post:
-      operationId: listClients
-      requestBody:
-        $ref: "#/components/requestBodies/ListClientRequest"
-      responses:
-        "200":
-          description: Paginated client list
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListClientResponse"
-
-  /clients/update:
-    post:
-      operationId: updateClient
-      requestBody:
-        $ref: "#/components/requestBodies/UpdateClientRequest"
-      responses:
-        "200":
-          description: Updated client
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Client"
-
-  /clients/delete:
-    post:
-      operationId: deleteClient
-      requestBody:
-        $ref: "#/components/requestBodies/DeleteClientRequest"
-      responses:
-        "200":
-          description: Deletion result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResponse"
-
-  /clients/restore:
-    post:
-      operationId: restoreClient
-      requestBody:
-        $ref: "#/components/requestBodies/RestoreClientRequest"
-      responses:
-        "200":
-          description: Restore result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResponse"
+    Status:
+      $ref: "./openapi/common.yaml#/components/schemas/Status"
+    BaseResponse:
+      $ref: "./openapi/common.yaml#/components/schemas/BaseResponse"
+    ResultResponse:
+      $ref: "./openapi/common.yaml#/components/schemas/ResultResponse"
