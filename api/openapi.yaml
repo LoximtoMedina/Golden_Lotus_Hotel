@@ -4,6 +4,16 @@ info:
   version: 1.0.0
 
 paths:
+  # Auth
+  /api/auth/fetch:
+    $ref: "./openapi/auth.yaml#/paths/fetch"
+
+  /api/auth/login:
+    $ref: "./openapi/auth.yaml#/paths/login"
+
+  /api/auth/logout:
+    $ref: "./openapi/auth.yaml#/paths/logout"
+
   # Employees
   /api/employees/create:
     $ref: "./openapi/employees.yaml#/paths/create"
