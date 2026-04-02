@@ -1,0 +1,292 @@
+components:
+  schemas:
+    Room:
+      type: object
+      required: [id, number, roomTypeId, description, state, active, creationDate]
+      properties:
+        id:
+          type: integer
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum: [Avaliable, Occupied, Maintenance]
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    RoomCreateInput:
+      type: object
+      required: [number, roomTypeId, description, state]
+      properties:
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum: [Avaliable, Occupied, Maintenance]
+
+    RoomUpdateInput:
+      type: object
+      required: [roomId]
+      properties:
+        roomId:
+          type: integer
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum: [Avaliable, Occupied, Maintenance]
+        active:
+          type: boolean
+
+    RoomGetInput:
+      type: object
+      required: [roomIds]
+      properties:
+        roomIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, number, roomTypeId, description, state, active, creationDate]
+
+    RoomListInput:
+      type: object
+      required: [count, page]
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required: [query, searchIn]
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum: [number, description, state]
+        filters:
+          type: object
+          properties:
+            roomTypeId:
+              type: integer
+            state:
+              type: string
+              enum: [Avaliable, Occupied, Maintenance]
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum: [number, state, creationDate]
+            order:
+              type: string
+              enum: [asc, desc]
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, number, roomTypeId, description, state, active, creationDate]
+
+    RoomDataResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Room"
+
+    RoomGetResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Room"
+
+    RoomListResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Room"
+            total:
+              type: integer
+            page:
+              type: integer
+
+  requestBodies:
+    RoomCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomCreateInput"
+
+    RoomUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomUpdateInput"
+
+    RoomDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [roomId]
+            properties:
+              roomId:
+                type: integer
+
+    RoomRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [roomId]
+            properties:
+              roomId:
+                type: integer
+
+    RoomGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomGetInput"
+
+    RoomListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomListInput"
+
+paths:
+  create:
+    post:
+      operationId: createRoom
+      requestBody:
+        $ref: "#/components/requestBodies/RoomCreateRequest"
+      responses:
+        "200":
+          description: Create room response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomDataResponse"
+
+  update:
+    post:
+      operationId: updateRoom
+      requestBody:
+        $ref: "#/components/requestBodies/RoomUpdateRequest"
+      responses:
+        "200":
+          description: Update room response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomDataResponse"
+
+  delete:
+    post:
+      operationId: deleteRoom
+      requestBody:
+        $ref: "#/components/requestBodies/RoomDeleteRequest"
+      responses:
+        "200":
+          description: Delete room response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  restore:
+    post:
+      operationId: restoreRoom
+      requestBody:
+        $ref: "#/components/requestBodies/RoomRestoreRequest"
+      responses:
+        "200":
+          description: Restore room response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  get:
+    post:
+      operationId: getRooms
+      requestBody:
+        $ref: "#/components/requestBodies/RoomGetRequest"
+      responses:
+        "200":
+          description: Get rooms response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomGetResponse"
+
+  list:
+    post:
+      operationId: listRooms
+      requestBody:
+        $ref: "#/components/requestBodies/RoomListRequest"
+      responses:
+        "200":
+          description: List rooms response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomListResponse"

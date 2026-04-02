@@ -1,0 +1,273 @@
+components:
+  schemas:
+    RoomType:
+      type: object
+      required: [id, description, maxOccupancy, price, active, creationDate]
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    RoomTypeCreateInput:
+      type: object
+      required: [description, maxOccupancy, price]
+      properties:
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+
+    RoomTypeUpdateInput:
+      type: object
+      required: [roomTypeId]
+      properties:
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+
+    RoomTypeGetInput:
+      type: object
+      required: [roomTypeIds]
+      properties:
+        roomTypeIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, description, maxOccupancy, price, active, creationDate]
+
+    RoomTypeListInput:
+      type: object
+      required: [count, page]
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required: [query, searchIn]
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum: [description]
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum: [description, maxOccupancy, price, creationDate]
+            order:
+              type: string
+              enum: [asc, desc]
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [id, description, maxOccupancy, price, active, creationDate]
+
+    RoomTypeDataResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/RoomType"
+
+    RoomTypeGetResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/RoomType"
+
+    RoomTypeListResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/RoomType"
+            total:
+              type: integer
+            page:
+              type: integer
+
+  requestBodies:
+    RoomTypeCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomTypeCreateInput"
+
+    RoomTypeUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomTypeUpdateInput"
+
+    RoomTypeDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [roomTypeId]
+            properties:
+              roomTypeId:
+                type: integer
+
+    RoomTypeRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [roomTypeId]
+            properties:
+              roomTypeId:
+                type: integer
+
+    RoomTypeGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomTypeGetInput"
+
+    RoomTypeListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RoomTypeListInput"
+
+paths:
+  create:
+    post:
+      operationId: createRoomType
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeCreateRequest"
+      responses:
+        "200":
+          description: Create room type response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomTypeDataResponse"
+
+  update:
+    post:
+      operationId: updateRoomType
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeUpdateRequest"
+      responses:
+        "200":
+          description: Update room type response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomTypeDataResponse"
+
+  delete:
+    post:
+      operationId: deleteRoomType
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeDeleteRequest"
+      responses:
+        "200":
+          description: Delete room type response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  restore:
+    post:
+      operationId: restoreRoomType
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeRestoreRequest"
+      responses:
+        "200":
+          description: Restore room type response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  get:
+    post:
+      operationId: getRoomTypes
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeGetRequest"
+      responses:
+        "200":
+          description: Get room types response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomTypeGetResponse"
+
+  list:
+    post:
+      operationId: listRoomTypes
+      requestBody:
+        $ref: "#/components/requestBodies/RoomTypeListRequest"
+      responses:
+        "200":
+          description: List room types response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomTypeListResponse"

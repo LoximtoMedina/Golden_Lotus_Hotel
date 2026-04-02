@@ -1,0 +1,128 @@
+components:
+  schemas:
+    SessionEmployee:
+      type: object
+      required: [id, identityNumber, phone, salary, name, email, role, active, creationDate]
+      properties:
+        id:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        role:
+          type: string
+          enum: [Manager, Receptionist, Housekeeper, Maintenance]
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    LoginInput:
+      type: object
+      required: [email, accessKey]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+
+    FetchAuthResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/SessionEmployee"
+
+    LoginResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/SessionEmployee"
+
+    LogoutResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            result:
+              type: boolean
+
+  requestBodies:
+    LoginRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginInput"
+
+paths:
+  fetch:
+    get:
+      operationId: fetchAuthSession
+      responses:
+        "200":
+          description: Fetch current authenticated employee session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FetchAuthResponse"
+
+  login:
+    post:
+      operationId: loginAuth
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequest"
+      responses:
+        "200":
+          description: Login response
+          headers:
+            Set-Cookie:
+              description: HttpOnly JWT cookie containing the session token.
+              schema:
+                type: string
+                example: session=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; Secure; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+
+  logout:
+    post:
+      operationId: logoutAuth
+      responses:
+        "200":
+          description: Logout response and clear auth cookie
+          headers:
+            Set-Cookie:
+              description: Clears the session cookie on logout.
+              schema:
+                type: string
+                example: session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutResponse"

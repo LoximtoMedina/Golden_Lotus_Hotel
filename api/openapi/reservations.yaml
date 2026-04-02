@@ -1,0 +1,305 @@
+components:
+  schemas:
+    Reservation:
+      type: object
+      required: [id, clientId, roomId, status, checkInDate, checkOutDate, charge, active, creationDate]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum: [Pending, Confirmed, CheckedIn, CheckedOut, Cancelled]
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+
+    ReservationCreateInput:
+      type: object
+      required: [clientId, roomId, checkInDate, checkOutDate, charge]
+      properties:
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum: [Pending, Confirmed, CheckedIn, CheckedOut, Cancelled]
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+
+    ReservationUpdateInput:
+      type: object
+      required: [reservationId]
+      properties:
+        reservationId:
+          type: integer
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum: [Pending, Confirmed, CheckedIn, CheckedOut, Cancelled]
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+
+    ReservationGetInput:
+      type: object
+      required: [reservationIds]
+      properties:
+        reservationIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              [id, clientId, roomId, status, checkInDate, checkOutDate, charge, active, creationDate]
+
+    ReservationListInput:
+      type: object
+      required: [count, page]
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required: [query, searchIn]
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum: [status]
+        filters:
+          type: object
+          properties:
+            clientId:
+              type: integer
+            roomId:
+              type: integer
+            status:
+              type: string
+              enum: [Pending, Confirmed, CheckedIn, CheckedOut, Cancelled]
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum: [checkInDate, checkOutDate, creationDate, status]
+            order:
+              type: string
+              enum: [asc, desc]
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              [id, clientId, roomId, status, checkInDate, checkOutDate, charge, active, creationDate]
+
+    ReservationDataResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Reservation"
+
+    ReservationGetResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Reservation"
+
+    ReservationListResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Reservation"
+            total:
+              type: integer
+            page:
+              type: integer
+
+  requestBodies:
+    ReservationCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReservationCreateInput"
+
+    ReservationUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReservationUpdateInput"
+
+    ReservationDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [reservationId]
+            properties:
+              reservationId:
+                type: integer
+
+    ReservationRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [reservationId]
+            properties:
+              reservationId:
+                type: integer
+
+    ReservationGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReservationGetInput"
+
+    ReservationListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ReservationListInput"
+
+paths:
+  create:
+    post:
+      operationId: createReservation
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationCreateRequest"
+      responses:
+        "200":
+          description: Create reservation response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationDataResponse"
+
+  update:
+    post:
+      operationId: updateReservation
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationUpdateRequest"
+      responses:
+        "200":
+          description: Update reservation response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationDataResponse"
+
+  delete:
+    post:
+      operationId: deleteReservation
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationDeleteRequest"
+      responses:
+        "200":
+          description: Delete reservation response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  restore:
+    post:
+      operationId: restoreReservation
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationRestoreRequest"
+      responses:
+        "200":
+          description: Restore reservation response
+          content:
+            application/json:
+              schema:
+                $ref: "./common.yaml#/components/schemas/ResultResponse"
+
+  get:
+    post:
+      operationId: getReservations
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationGetRequest"
+      responses:
+        "200":
+          description: Get reservations response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationGetResponse"
+
+  list:
+    post:
+      operationId: listReservations
+      requestBody:
+        $ref: "#/components/requestBodies/ReservationListRequest"
+      responses:
+        "200":
+          description: List reservations response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationListResponse"
