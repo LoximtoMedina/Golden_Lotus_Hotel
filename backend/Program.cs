@@ -6,12 +6,45 @@ using backend.Features.RoomTypes;
 using backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envPath))
+{
+    foreach (var rawLine in File.ReadAllLines(envPath))
+    {
+        var line = rawLine.Trim();
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+        {
+            continue;
+        }
+
+        var separatorIndex = line.IndexOf('=');
+        if (separatorIndex <= 0)
+        {
+            continue;
+        }
+
+        var key = line[..separatorIndex].Trim();
+        var value = line[(separatorIndex + 1)..].Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+        {
+            Environment.SetEnvironmentVariable(key, value);
+        }
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Missing database connection string. Set ConnectionStrings__ConnectionString in environment variables.");
+}
+
 builder.Services.AddDbContext<AppDbContext>(
-    options => 
+    options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("ConnectionString")
+        connectionString
         )
     );
 
@@ -21,6 +54,7 @@ builder.Services.AddScoped<Repository<Employee>>();
 builder.Services.AddScoped<Repository<Reservation>>();
 builder.Services.AddScoped<Repository<Room>>();
 builder.Services.AddScoped<Repository<RoomType>>();
+builder.Services.AddScoped<EmployeeService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -30,7 +64,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

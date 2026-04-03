@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -17,5 +17,16 @@ namespace backend.Infrastructure
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
+
+        // Telling entity framework to mind its own business and transform the Role enum to a string in the database, otherwise it would use integers 
+        // and that would be a problem if we ever change the order of the enum values
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Employee>()
+                .Property(e => e.Role)
+                .HasConversion<string>();
+        }
     }
 }
