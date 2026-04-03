@@ -54,7 +54,11 @@ builder.Services.AddScoped<Repository<Employee>>();
 builder.Services.AddScoped<Repository<Reservation>>();
 builder.Services.AddScoped<Repository<Room>>();
 builder.Services.AddScoped<Repository<RoomType>>();
+builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<RoomTypeService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
