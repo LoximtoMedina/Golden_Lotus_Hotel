@@ -1,4 +1,5 @@
 using backend.Features.Sessions;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,16 +7,19 @@ builder.Services.AddScoped<SessionService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var apiSpecDirectory = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "api"));
+
+if (Directory.Exists(apiSpecDirectory))
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(apiSpecDirectory),
+        RequestPath = "/api-spec",
+        ServeUnknownFileTypes = true,
+    });
 }
 
 app.UseHttpsRedirection();

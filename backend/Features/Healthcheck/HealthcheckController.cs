@@ -1,3 +1,4 @@
+using backend.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Features.Healthcheck
@@ -7,12 +8,13 @@ namespace backend.Features.Healthcheck
   public class HealthcheckController : ControllerBase
   {
     [HttpGet("ping")]
-    public IActionResult Ping()
+    [ProducesResponseType(typeof(HealthcheckResponse), StatusCodes.Status200OK)]
+    public ActionResult<HealthcheckResponse> Ping()
     {
-      return Ok(new
+      return Ok(new HealthcheckResponse
       {
-        status = "success",
-        message = "pong",
+        Status = Status.Success,
+        Message = "pong",
       });
     }
   }

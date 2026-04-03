@@ -2,118 +2,1796 @@ openapi: 3.0.0
 info:
   title: Golden Lotus Hotel API
   version: 1.0.0
-
 paths:
-  # Auth
+  /api/healthcheck/ping:
+    get:
+      operationId: pingHealthcheck
+      responses:
+        '200':
+          description: Healthcheck response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthcheckResponse'
   /api/auth/fetch:
-    $ref: "./openapi/auth.yaml#/paths/fetch"
-
+    get:
+      operationId: fetchAuthSession
+      responses:
+        '200':
+          description: Fetch current authenticated employee session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchAuthResponse'
   /api/auth/login:
-    $ref: "./openapi/auth.yaml#/paths/login"
-
+    post:
+      operationId: loginAuth
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          description: Login response
+          headers:
+            Set-Cookie:
+              description: HttpOnly JWT cookie containing the session token.
+              schema:
+                type: string
+                example: session=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; Secure; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
   /api/auth/logout:
-    $ref: "./openapi/auth.yaml#/paths/logout"
-
-  # Employees
+    post:
+      operationId: logoutAuth
+      responses:
+        '200':
+          description: Logout response and clear auth cookie
+          headers:
+            Set-Cookie:
+              description: Clears the session cookie on logout.
+              schema:
+                type: string
+                example: session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
   /api/employees/create:
-    $ref: "./openapi/employees.yaml#/paths/create"
-
+    post:
+      operationId: createEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeCreateRequest'
+      responses:
+        '200':
+          description: Create employee response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDataResponse'
   /api/employees/update:
-    $ref: "./openapi/employees.yaml#/paths/update"
-
+    post:
+      operationId: updateEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeUpdateRequest'
+      responses:
+        '200':
+          description: Update employee response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDataResponse'
   /api/employees/delete:
-    $ref: "./openapi/employees.yaml#/paths/delete"
-
+    post:
+      operationId: deleteEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeDeleteRequest'
+      responses:
+        '200':
+          description: Delete employee response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/employees/restore:
-    $ref: "./openapi/employees.yaml#/paths/restore"
-
+    post:
+      operationId: restoreEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeRestoreRequest'
+      responses:
+        '200':
+          description: Restore employee response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/employees/get:
-    $ref: "./openapi/employees.yaml#/paths/get"
-
+    post:
+      operationId: getEmployees
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeGetRequest'
+      responses:
+        '200':
+          description: Get employees response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeGetResponse'
   /api/employees/list:
-    $ref: "./openapi/employees.yaml#/paths/list"
-
-  # Clients
+    post:
+      operationId: listEmployees
+      requestBody:
+        $ref: '#/components/requestBodies/EmployeeListRequest'
+      responses:
+        '200':
+          description: List employees response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeListResponse'
   /api/clients/create:
-    $ref: "./openapi/clients.yaml#/paths/create"
-
+    post:
+      operationId: createClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientCreateRequest'
+      responses:
+        '200':
+          description: Create client response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDataResponse'
   /api/clients/update:
-    $ref: "./openapi/clients.yaml#/paths/update"
-
+    post:
+      operationId: updateClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientUpdateRequest'
+      responses:
+        '200':
+          description: Update client response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDataResponse'
   /api/clients/delete:
-    $ref: "./openapi/clients.yaml#/paths/delete"
-
+    post:
+      operationId: deleteClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientDeleteRequest'
+      responses:
+        '200':
+          description: Delete client response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/clients/restore:
-    $ref: "./openapi/clients.yaml#/paths/restore"
-
+    post:
+      operationId: restoreClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientRestoreRequest'
+      responses:
+        '200':
+          description: Restore client response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/clients/get:
-    $ref: "./openapi/clients.yaml#/paths/get"
-
+    post:
+      operationId: getClients
+      requestBody:
+        $ref: '#/components/requestBodies/ClientGetRequest'
+      responses:
+        '200':
+          description: Get clients response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientGetResponse'
   /api/clients/list:
-    $ref: "./openapi/clients.yaml#/paths/list"
-
-  # Room Types
+    post:
+      operationId: listClients
+      requestBody:
+        $ref: '#/components/requestBodies/ClientListRequest'
+      responses:
+        '200':
+          description: List clients response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientListResponse'
   /api/room-types/create:
-    $ref: "./openapi/room-types.yaml#/paths/create"
-
+    post:
+      operationId: createRoomType
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeCreateRequest'
+      responses:
+        '200':
+          description: Create room type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomTypeDataResponse'
   /api/room-types/update:
-    $ref: "./openapi/room-types.yaml#/paths/update"
-
+    post:
+      operationId: updateRoomType
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeUpdateRequest'
+      responses:
+        '200':
+          description: Update room type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomTypeDataResponse'
   /api/room-types/delete:
-    $ref: "./openapi/room-types.yaml#/paths/delete"
-
+    post:
+      operationId: deleteRoomType
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeDeleteRequest'
+      responses:
+        '200':
+          description: Delete room type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/room-types/restore:
-    $ref: "./openapi/room-types.yaml#/paths/restore"
-
+    post:
+      operationId: restoreRoomType
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeRestoreRequest'
+      responses:
+        '200':
+          description: Restore room type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/room-types/get:
-    $ref: "./openapi/room-types.yaml#/paths/get"
-
+    post:
+      operationId: getRoomTypes
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeGetRequest'
+      responses:
+        '200':
+          description: Get room types response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomTypeGetResponse'
   /api/room-types/list:
-    $ref: "./openapi/room-types.yaml#/paths/list"
-
-  # Rooms
+    post:
+      operationId: listRoomTypes
+      requestBody:
+        $ref: '#/components/requestBodies/RoomTypeListRequest'
+      responses:
+        '200':
+          description: List room types response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomTypeListResponse'
   /api/rooms/create:
-    $ref: "./openapi/rooms.yaml#/paths/create"
-
+    post:
+      operationId: createRoom
+      requestBody:
+        $ref: '#/components/requestBodies/RoomCreateRequest'
+      responses:
+        '200':
+          description: Create room response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDataResponse'
   /api/rooms/update:
-    $ref: "./openapi/rooms.yaml#/paths/update"
-
+    post:
+      operationId: updateRoom
+      requestBody:
+        $ref: '#/components/requestBodies/RoomUpdateRequest'
+      responses:
+        '200':
+          description: Update room response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDataResponse'
   /api/rooms/delete:
-    $ref: "./openapi/rooms.yaml#/paths/delete"
-
+    post:
+      operationId: deleteRoom
+      requestBody:
+        $ref: '#/components/requestBodies/RoomDeleteRequest'
+      responses:
+        '200':
+          description: Delete room response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/rooms/restore:
-    $ref: "./openapi/rooms.yaml#/paths/restore"
-
+    post:
+      operationId: restoreRoom
+      requestBody:
+        $ref: '#/components/requestBodies/RoomRestoreRequest'
+      responses:
+        '200':
+          description: Restore room response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/rooms/get:
-    $ref: "./openapi/rooms.yaml#/paths/get"
-
+    post:
+      operationId: getRooms
+      requestBody:
+        $ref: '#/components/requestBodies/RoomGetRequest'
+      responses:
+        '200':
+          description: Get rooms response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomGetResponse'
   /api/rooms/list:
-    $ref: "./openapi/rooms.yaml#/paths/list"
-
-  # Reservations
+    post:
+      operationId: listRooms
+      requestBody:
+        $ref: '#/components/requestBodies/RoomListRequest'
+      responses:
+        '200':
+          description: List rooms response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomListResponse'
   /api/reservations/create:
-    $ref: "./openapi/reservations.yaml#/paths/create"
-
+    post:
+      operationId: createReservation
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationCreateRequest'
+      responses:
+        '200':
+          description: Create reservation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDataResponse'
   /api/reservations/update:
-    $ref: "./openapi/reservations.yaml#/paths/update"
-
+    post:
+      operationId: updateReservation
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationUpdateRequest'
+      responses:
+        '200':
+          description: Update reservation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDataResponse'
   /api/reservations/delete:
-    $ref: "./openapi/reservations.yaml#/paths/delete"
-
+    post:
+      operationId: deleteReservation
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationDeleteRequest'
+      responses:
+        '200':
+          description: Delete reservation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/reservations/restore:
-    $ref: "./openapi/reservations.yaml#/paths/restore"
-
+    post:
+      operationId: restoreReservation
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationRestoreRequest'
+      responses:
+        '200':
+          description: Restore reservation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultResponse'
   /api/reservations/get:
-    $ref: "./openapi/reservations.yaml#/paths/get"
-
+    post:
+      operationId: getReservations
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationGetRequest'
+      responses:
+        '200':
+          description: Get reservations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationGetResponse'
   /api/reservations/list:
-    $ref: "./openapi/reservations.yaml#/paths/list"
-
+    post:
+      operationId: listReservations
+      requestBody:
+        $ref: '#/components/requestBodies/ReservationListRequest'
+      responses:
+        '200':
+          description: List reservations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationListResponse'
 components:
   schemas:
     Status:
-      $ref: "./openapi/common.yaml#/components/schemas/Status"
+      type: string
+      enum:
+        - success
+        - forbidden
+        - duplicate-record
+        - not-found
+        - invalid-request
+        - internal-error
     BaseResponse:
-      $ref: "./openapi/common.yaml#/components/schemas/BaseResponse"
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
     ResultResponse:
-      $ref: "./openapi/common.yaml#/components/schemas/ResultResponse"
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            result:
+              type: boolean
+    HealthcheckResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            message:
+              type: string
+              example: pong
+    SessionEmployee:
+      type: object
+      required:
+        - id
+        - identityNumber
+        - phone
+        - salary
+        - name
+        - email
+        - role
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        role:
+          type: string
+          enum:
+            - Manager
+            - Receptionist
+            - Housekeeper
+            - Maintenance
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    FetchAuthResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SessionEmployee'
+    LoginInput:
+      type: object
+      required:
+        - email
+        - accessKey
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SessionEmployee'
+    LogoutResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            result:
+              type: boolean
+    EmployeeCreateInput:
+      type: object
+      required:
+        - identityNumber
+        - phone
+        - salary
+        - name
+        - email
+        - accessKey
+        - role
+      properties:
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+        role:
+          type: string
+          enum:
+            - Manager
+            - Receptionist
+            - Housekeeper
+            - Maintenance
+    Employee:
+      type: object
+      required:
+        - id
+        - identityNumber
+        - phone
+        - salary
+        - name
+        - email
+        - role
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        role:
+          type: string
+          enum:
+            - Manager
+            - Receptionist
+            - Housekeeper
+            - Maintenance
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    EmployeeDataResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Employee'
+    EmployeeUpdateInput:
+      type: object
+      required:
+        - employeeId
+      properties:
+        employeeId:
+          type: integer
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        salary:
+          type: number
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 50
+        accessKey:
+          type: string
+          minLength: 1
+          maxLength: 255
+        role:
+          type: string
+          enum:
+            - Manager
+            - Receptionist
+            - Housekeeper
+            - Maintenance
+        active:
+          type: boolean
+    EmployeeGetInput:
+      type: object
+      required:
+        - employeeIds
+      properties:
+        employeeIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - identityNumber
+              - phone
+              - salary
+              - name
+              - email
+              - role
+              - active
+              - creationDate
+    EmployeeGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Employee'
+    EmployeeListInput:
+      type: object
+      required:
+        - count
+        - page
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required:
+            - query
+            - searchIn
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum:
+                  - identityNumber
+                  - phone
+                  - name
+                  - email
+                  - role
+        filters:
+          type: object
+          properties:
+            role:
+              type: string
+              enum:
+                - Manager
+                - Receptionist
+                - Housekeeper
+                - Maintenance
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum:
+                - name
+                - role
+                - creationDate
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - identityNumber
+              - phone
+              - salary
+              - name
+              - email
+              - role
+              - active
+              - creationDate
+    EmployeeListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Employee'
+            total:
+              type: integer
+            page:
+              type: integer
+    ClientCreateInput:
+      type: object
+      required:
+        - name
+        - identityNumber
+        - phone
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+    Client:
+      type: object
+      required:
+        - id
+        - name
+        - identityNumber
+        - phone
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    ClientDataResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Client'
+    ClientUpdateInput:
+      type: object
+      required:
+        - clientId
+      properties:
+        clientId:
+          type: integer
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        identityNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 24
+        active:
+          type: boolean
+    ClientGetInput:
+      type: object
+      required:
+        - clientIds
+      properties:
+        clientIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - name
+              - identityNumber
+              - phone
+              - active
+              - creationDate
+    ClientGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Client'
+    ClientListInput:
+      type: object
+      required:
+        - count
+        - page
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required:
+            - query
+            - searchIn
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum:
+                  - name
+                  - identityNumber
+                  - phone
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum:
+                - name
+                - creationDate
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - name
+              - identityNumber
+              - phone
+              - active
+              - creationDate
+    ClientListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Client'
+            total:
+              type: integer
+            page:
+              type: integer
+    RoomTypeCreateInput:
+      type: object
+      required:
+        - description
+        - maxOccupancy
+        - price
+      properties:
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+    RoomType:
+      type: object
+      required:
+        - id
+        - description
+        - maxOccupancy
+        - price
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    RoomTypeDataResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/RoomType'
+    RoomTypeUpdateInput:
+      type: object
+      required:
+        - roomTypeId
+      properties:
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 50
+        maxOccupancy:
+          type: integer
+          minimum: 1
+        price:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+    RoomTypeGetInput:
+      type: object
+      required:
+        - roomTypeIds
+      properties:
+        roomTypeIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - description
+              - maxOccupancy
+              - price
+              - active
+              - creationDate
+    RoomTypeGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/RoomType'
+    RoomTypeListInput:
+      type: object
+      required:
+        - count
+        - page
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required:
+            - query
+            - searchIn
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum:
+                  - description
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum:
+                - description
+                - maxOccupancy
+                - price
+                - creationDate
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - description
+              - maxOccupancy
+              - price
+              - active
+              - creationDate
+    RoomTypeListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/RoomType'
+            total:
+              type: integer
+            page:
+              type: integer
+    RoomCreateInput:
+      type: object
+      required:
+        - number
+        - roomTypeId
+        - description
+        - state
+      properties:
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum:
+            - Avaliable
+            - Occupied
+            - Maintenance
+    Room:
+      type: object
+      required:
+        - id
+        - number
+        - roomTypeId
+        - description
+        - state
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum:
+            - Avaliable
+            - Occupied
+            - Maintenance
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    RoomDataResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Room'
+    RoomUpdateInput:
+      type: object
+      required:
+        - roomId
+      properties:
+        roomId:
+          type: integer
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        roomTypeId:
+          type: integer
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        state:
+          type: string
+          enum:
+            - Avaliable
+            - Occupied
+            - Maintenance
+        active:
+          type: boolean
+    RoomGetInput:
+      type: object
+      required:
+        - roomIds
+      properties:
+        roomIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - number
+              - roomTypeId
+              - description
+              - state
+              - active
+              - creationDate
+    RoomGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Room'
+    RoomListInput:
+      type: object
+      required:
+        - count
+        - page
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required:
+            - query
+            - searchIn
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum:
+                  - number
+                  - description
+                  - state
+        filters:
+          type: object
+          properties:
+            roomTypeId:
+              type: integer
+            state:
+              type: string
+              enum:
+                - Avaliable
+                - Occupied
+                - Maintenance
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum:
+                - number
+                - state
+                - creationDate
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - number
+              - roomTypeId
+              - description
+              - state
+              - active
+              - creationDate
+    RoomListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Room'
+            total:
+              type: integer
+            page:
+              type: integer
+    ReservationCreateInput:
+      type: object
+      required:
+        - clientId
+        - roomId
+        - checkInDate
+        - checkOutDate
+        - charge
+      properties:
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum:
+            - Pending
+            - Confirmed
+            - CheckedIn
+            - CheckedOut
+            - Cancelled
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+    Reservation:
+      type: object
+      required:
+        - id
+        - clientId
+        - roomId
+        - status
+        - checkInDate
+        - checkOutDate
+        - charge
+        - active
+        - creationDate
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum:
+            - Pending
+            - Confirmed
+            - CheckedIn
+            - CheckedOut
+            - Cancelled
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+    ReservationDataResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Reservation'
+    ReservationUpdateInput:
+      type: object
+      required:
+        - reservationId
+      properties:
+        reservationId:
+          type: integer
+        clientId:
+          type: integer
+        roomId:
+          type: integer
+        status:
+          type: string
+          enum:
+            - Pending
+            - Confirmed
+            - CheckedIn
+            - CheckedOut
+            - Cancelled
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        charge:
+          type: number
+          minimum: 0
+        active:
+          type: boolean
+    ReservationGetInput:
+      type: object
+      required:
+        - reservationIds
+      properties:
+        reservationIds:
+          type: array
+          items:
+            type: integer
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - clientId
+              - roomId
+              - status
+              - checkInDate
+              - checkOutDate
+              - charge
+              - active
+              - creationDate
+    ReservationGetResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Reservation'
+    ReservationListInput:
+      type: object
+      required:
+        - count
+        - page
+      properties:
+        count:
+          type: integer
+          minimum: 1
+        page:
+          type: integer
+          minimum: 0
+        includeDeleted:
+          type: boolean
+        search:
+          type: object
+          required:
+            - query
+            - searchIn
+          properties:
+            query:
+              type: string
+              minLength: 1
+              maxLength: 100
+            searchIn:
+              type: array
+              items:
+                type: string
+                enum:
+                  - status
+        filters:
+          type: object
+          properties:
+            clientId:
+              type: integer
+            roomId:
+              type: integer
+            status:
+              type: string
+              enum:
+                - Pending
+                - Confirmed
+                - CheckedIn
+                - CheckedOut
+                - Cancelled
+            active:
+              type: boolean
+        sort:
+          type: object
+          properties:
+            by:
+              type: string
+              enum:
+                - checkInDate
+                - checkOutDate
+                - creationDate
+                - status
+            order:
+              type: string
+              enum:
+                - asc
+                - desc
+        fields:
+          type: array
+          items:
+            type: string
+            enum:
+              - id
+              - clientId
+              - roomId
+              - status
+              - checkInDate
+              - checkOutDate
+              - charge
+              - active
+              - creationDate
+    ReservationListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Reservation'
+            total:
+              type: integer
+            page:
+              type: integer
+  requestBodies:
+    LoginRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginInput'
+    EmployeeCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmployeeCreateInput'
+    EmployeeUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmployeeUpdateInput'
+    EmployeeDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - employeeId
+            properties:
+              employeeId:
+                type: integer
+    EmployeeRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - employeeId
+            properties:
+              employeeId:
+                type: integer
+    EmployeeGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmployeeGetInput'
+    EmployeeListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmployeeListInput'
+    ClientCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientCreateInput'
+    ClientUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientUpdateInput'
+    ClientDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - clientId
+            properties:
+              clientId:
+                type: integer
+    ClientRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - clientId
+            properties:
+              clientId:
+                type: integer
+    ClientGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientGetInput'
+    ClientListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientListInput'
+    RoomTypeCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomTypeCreateInput'
+    RoomTypeUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomTypeUpdateInput'
+    RoomTypeDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - roomTypeId
+            properties:
+              roomTypeId:
+                type: integer
+    RoomTypeRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - roomTypeId
+            properties:
+              roomTypeId:
+                type: integer
+    RoomTypeGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomTypeGetInput'
+    RoomTypeListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomTypeListInput'
+    RoomCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomCreateInput'
+    RoomUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomUpdateInput'
+    RoomDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - roomId
+            properties:
+              roomId:
+                type: integer
+    RoomRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - roomId
+            properties:
+              roomId:
+                type: integer
+    RoomGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomGetInput'
+    RoomListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomListInput'
+    ReservationCreateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReservationCreateInput'
+    ReservationUpdateRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReservationUpdateInput'
+    ReservationDeleteRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reservationId
+            properties:
+              reservationId:
+                type: integer
+    ReservationRestoreRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - reservationId
+            properties:
+              reservationId:
+                type: integer
+    ReservationGetRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReservationGetInput'
+    ReservationListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReservationListInput'

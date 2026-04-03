@@ -17,7 +17,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="NSwag.MSBuild" Version="14.2.0" PrivateAssets="all" />
   </ItemGroup>
+
+  <Target Name="GenerateOpenApiContracts" BeforeTargets="BeforeCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="$(NSwagExe_Net80) run nswag.json" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
 
 </Project>
