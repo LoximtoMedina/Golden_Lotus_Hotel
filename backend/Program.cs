@@ -1,5 +1,8 @@
 using backend.Features.Clients;
 using backend.Features.Employees;
+using backend.Features.Reservations;
+using backend.Features.Rooms;
+using backend.Features.RoomTypes;
 using backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +18,9 @@ builder.Services.AddDbContext<AppDbContext>(
 //Repositories
 builder.Services.AddScoped<Repository<Client>>();
 builder.Services.AddScoped<Repository<Employee>>();
+builder.Services.AddScoped<Repository<Reservation>>();
+builder.Services.AddScoped<Repository<Room>>();
+builder.Services.AddScoped<Repository<RoomType>>();
 
 // Add services to the container.
 builder.Services.AddControllers();
