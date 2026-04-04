@@ -41,6 +41,8 @@ namespace backend.Features.Auth
           var employee = await dbContext.Employees
             .FirstOrDefaultAsync(e => e.Email == email && e.Active);
 
+          Console.WriteLine($"Employee found: {employee}");
+
           if (employee == null || employee.AccessKey != accessKey)
           {
             return (false, null, null);
@@ -52,16 +54,17 @@ namespace backend.Features.Auth
           _activeSessions[token] = new Session
           {
             EmployeeId = employee.Id,
-            Token = token,
-            CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(GetExpirationMinutes())
+            SessionKey = token,
+            CreationDate = DateTime.UtcNow,
+            ExpirationDate = DateTime.UtcNow.AddMinutes(GetExpirationMinutes())
           };
 
           return (true, token, employee);
         }
       }
-      catch
+      catch (Exception ex)
       {
+        Console.WriteLine($"Login error: {ex.Message}");
         return (false, null, null);
       }
     }
@@ -77,7 +80,7 @@ namespace backend.Features.Auth
         // Check if token is in active sessions and not expired
         if (_activeSessions.TryGetValue(token, out var session))
         {
-          if (session.ExpiresAt > DateTime.UtcNow)
+          if (session.ExpirationDate > DateTime.UtcNow)
           {
             // Verify the token signature
             return Task.FromResult(VerifyTokenSignature(token));
