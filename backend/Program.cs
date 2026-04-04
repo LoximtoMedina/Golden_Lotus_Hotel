@@ -1,12 +1,83 @@
+using backend.Features.Clients;
+using backend.Features.Auth;
+using backend.Features.Employees;
+using backend.Features.Reservations;
+using backend.Features.Rooms;
+using backend.Features.RoomTypes;
+using backend.Features.Sessions;
+using backend.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envPath))
+{
+    foreach (var rawLine in File.ReadAllLines(envPath))
+    {
+        var line = rawLine.Trim();
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+        {
+            continue;
+        }
+
+        var separatorIndex = line.IndexOf('=');
+        if (separatorIndex <= 0)
+        {
+            continue;
+        }
+
+        var key = line[..separatorIndex].Trim();
+        var value = line[(separatorIndex + 1)..].Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+        {
+            Environment.SetEnvironmentVariable(key, value);
+        }
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Missing database connection string. Set ConnectionStrings__ConnectionString in environment variables.");
+}
+
+builder.Services.AddDbContext<AppDbContext>(
+    options =>
+    options.UseSqlServer(
+        connectionString
+        ),
+    contextLifetime: ServiceLifetime.Scoped,
+    optionsLifetime: ServiceLifetime.Singleton
+    );
+
+builder.Services.AddDbContextFactory<AppDbContext>(
+    options => options.UseSqlServer(connectionString)
+    );
+
+//Repositories
+builder.Services.AddScoped<Repository<Client>>();
+builder.Services.AddScoped<Repository<Employee>>();
+builder.Services.AddScoped<Repository<Reservation>>();
+builder.Services.AddScoped<Repository<Room>>();
+builder.Services.AddScoped<Repository<RoomType>>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<RoomTypeService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddScoped<SessionService>();
+
 // Add services to the container.
+builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -16,29 +87,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseMiddleware<IsAuthenticatedMiddleware>();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapControllers();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
