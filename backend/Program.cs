@@ -1,8 +1,10 @@
 using backend.Features.Clients;
+using backend.Features.Auth;
 using backend.Features.Employees;
 using backend.Features.Reservations;
 using backend.Features.Rooms;
 using backend.Features.RoomTypes;
+using backend.Features.Sessions;
 using backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,7 +47,13 @@ builder.Services.AddDbContext<AppDbContext>(
     options =>
     options.UseSqlServer(
         connectionString
-        )
+        ),
+    contextLifetime: ServiceLifetime.Scoped,
+    optionsLifetime: ServiceLifetime.Singleton
+    );
+
+builder.Services.AddDbContextFactory<AppDbContext>(
+    options => options.UseSqlServer(connectionString)
     );
 
 //Repositories
@@ -59,6 +67,8 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<RoomService>();
 builder.Services.AddScoped<RoomTypeService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddScoped<SessionService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -76,6 +86,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<IsAuthenticatedMiddleware>();
 
 app.MapControllers();
 

@@ -1,6 +1,7 @@
 ﻿using backend.Features.Clients;
 using backend.Features.Employees;
 using backend.Features.Reservations;
+using backend.Features.Sessions;
 using backend.Features.Rooms;
 using backend.Features.RoomTypes;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace backend.Infrastructure
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         // Telling entity framework to mind its own business and transform the Role enum to a string in the database, otherwise it would use integers 
         // and that would be a problem if we ever change the order of the enum values
