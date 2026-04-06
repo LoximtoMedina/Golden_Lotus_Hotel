@@ -7,6 +7,7 @@ using backend.Features.RoomTypes;
 using backend.Features.Sessions;
 using backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
 if (File.Exists(envPath))
@@ -36,6 +37,7 @@ if (File.Exists(envPath))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+var apiSpecDirectory = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "api"));
 
 var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
 if (string.IsNullOrWhiteSpace(connectionString))
@@ -73,7 +75,7 @@ builder.Services.AddScoped<SessionService>();
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Register built-in OpenAPI document generation.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -81,12 +83,17 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseStaticFiles(new StaticFileOptions
+    app.UseSwagger();
+
+    if (Directory.Exists(apiSpecDirectory))
     {
-        FileProvider = new PhysicalFileProvider(apiSpecDirectory),
-        RequestPath = "/api-spec",
-        ServeUnknownFileTypes = true,
-    });
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(apiSpecDirectory),
+            RequestPath = "/api-spec",
+            ServeUnknownFileTypes = true,
+        });
+    }
 }
 
 app.UseHttpsRedirection();
@@ -95,5 +102,5 @@ app.UseMiddleware<IsAuthenticatedMiddleware>();
 
 app.MapControllers();
 
-app.MapControllers();
+app.Run();
 
