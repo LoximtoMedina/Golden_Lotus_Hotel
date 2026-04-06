@@ -1,0 +1,18 @@
+{
+  "runtime": "Net80",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "../api/openapi.yaml"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "jsonLibrary": "SystemTextJson",
+      "generateClientClasses": false,
+      "generateClientInterfaces": false,
+      "generateDtoTypes": true,
+      "namespace": "backend.Contracts",
+      "output": "Generated/OpenApiContracts.g.cs"
+    }
+  }
+}

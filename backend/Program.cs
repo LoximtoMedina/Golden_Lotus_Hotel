@@ -81,8 +81,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(apiSpecDirectory),
+        RequestPath = "/api-spec",
+        ServeUnknownFileTypes = true,
+    });
 }
 
 app.UseHttpsRedirection();
@@ -91,5 +95,5 @@ app.UseMiddleware<IsAuthenticatedMiddleware>();
 
 app.MapControllers();
 
-app.Run();
+app.MapControllers();
 

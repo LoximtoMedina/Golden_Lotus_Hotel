@@ -1,0 +1,22 @@
+components:
+  schemas:
+    HealthcheckResponse:
+      allOf:
+        - $ref: "./common.yaml#/components/schemas/BaseResponse"
+        - type: object
+          properties:
+            message:
+              type: string
+              example: pong
+
+paths:
+  ping:
+    get:
+      operationId: pingHealthcheck
+      responses:
+        "200":
+          description: Healthcheck response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthcheckResponse"

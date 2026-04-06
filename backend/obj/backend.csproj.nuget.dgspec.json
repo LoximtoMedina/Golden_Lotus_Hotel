@@ -63,9 +63,10 @@
               "target": "Package",
               "version": "[8.0.13, )"
             },
-            "Swashbuckle.AspNetCore": {
+            "NSwag.MSBuild": {
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[14.2.0, )"
             }
           },
           "imports": [
