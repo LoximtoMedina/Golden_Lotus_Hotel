@@ -11,14 +11,14 @@ namespace backend.Features.Sessions
 
     public async Task InvokeAsync(HttpContext context, SessionService sessionService)
     {
-      string? authorization = context.Request.Headers.Authorization;
-      string? token = null;
-
-      if (!string.IsNullOrWhiteSpace(authorization) && authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+      var path = context.Request.Path.Value ?? string.Empty;
+      if (path.StartsWith("/api/auth", StringComparison.OrdinalIgnoreCase))
       {
-        token = authorization[7..].Trim();
+        await _next(context);
+        return;
       }
 
+      var token = sessionService.GetTokenFromRequest(context);
       bool isAuthenticated = await sessionService.ValidateTokenAsync(token);
       if (!isAuthenticated)
       {
@@ -26,6 +26,16 @@ namespace backend.Features.Sessions
         await context.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
         return;
       }
+
+      var employee = await sessionService.GetEmployeeFromTokenAsync(token);
+      if (employee is null)
+      {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
+        return;
+      }
+
+      context.Items["AuthenticatedEmployee"] = employee;
 
       await _next(context);
     }

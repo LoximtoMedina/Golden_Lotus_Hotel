@@ -6,7 +6,7 @@
         // Data about the employee
         public string IdentityNumber { get; set; }
         public string Phone { get; set; }
-        public float Salary { get; set; }
+        public decimal Salary { get; set; }
         public string Name { get; set; }
         // Access related
         public string Email { get; set; }

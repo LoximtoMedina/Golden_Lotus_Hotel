@@ -4418,19 +4418,19 @@
     ]
   },
   "packageFolders": {
-    "/home/asterki/.nuget/packages/": {}
+    "/home/asterkilaptop/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/asterki/Documents/UNAH/POO/Golden_Lotus_Hotel/backend/backend.csproj",
+      "projectUniqueName": "/home/asterkilaptop/Documents/Uni Docs/POO/Golden_Lotus_Hotel/backend/backend.csproj",
       "projectName": "backend",
-      "projectPath": "/home/asterki/Documents/UNAH/POO/Golden_Lotus_Hotel/backend/backend.csproj",
-      "packagesPath": "/home/asterki/.nuget/packages/",
-      "outputPath": "/home/asterki/Documents/UNAH/POO/Golden_Lotus_Hotel/backend/obj/",
+      "projectPath": "/home/asterkilaptop/Documents/Uni Docs/POO/Golden_Lotus_Hotel/backend/backend.csproj",
+      "packagesPath": "/home/asterkilaptop/.nuget/packages/",
+      "outputPath": "/home/asterkilaptop/Documents/Uni Docs/POO/Golden_Lotus_Hotel/backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/asterki/.nuget/NuGet/NuGet.Config"
+        "/home/asterkilaptop/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4448,6 +4448,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -4499,7 +4504,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.419/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

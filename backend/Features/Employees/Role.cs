@@ -4,7 +4,7 @@
     {
         Manager,
         Receptionist,
-        Housekeeping,
+        Housekeeper,
         Maintenance
     }
 }

@@ -1,18 +1,85 @@
+using backend.Features.Clients;
+using backend.Features.Auth;
+using backend.Features.Employees;
+using backend.Features.Reservations;
+using backend.Features.Rooms;
+using backend.Features.RoomTypes;
 using backend.Features.Sessions;
-using Microsoft.Extensions.FileProviders;
+using backend.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+if (File.Exists(envPath))
+{
+    foreach (var rawLine in File.ReadAllLines(envPath))
+    {
+        var line = rawLine.Trim();
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+        {
+            continue;
+        }
+
+        var separatorIndex = line.IndexOf('=');
+        if (separatorIndex <= 0)
+        {
+            continue;
+        }
+
+        var key = line[..separatorIndex].Trim();
+        var value = line[(separatorIndex + 1)..].Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+        {
+            Environment.SetEnvironmentVariable(key, value);
+        }
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Missing database connection string. Set ConnectionStrings__ConnectionString in environment variables.");
+}
+
+builder.Services.AddDbContext<AppDbContext>(
+    options =>
+    options.UseSqlServer(
+        connectionString
+        ),
+    contextLifetime: ServiceLifetime.Scoped,
+    optionsLifetime: ServiceLifetime.Singleton
+    );
+
+builder.Services.AddDbContextFactory<AppDbContext>(
+    options => options.UseSqlServer(connectionString)
+    );
+
+//Repositories
+builder.Services.AddScoped<Repository<Client>>();
+builder.Services.AddScoped<Repository<Employee>>();
+builder.Services.AddScoped<Repository<Reservation>>();
+builder.Services.AddScoped<Repository<Room>>();
+builder.Services.AddScoped<Repository<RoomType>>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<RoomTypeService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddScoped<SessionService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
-
-var apiSpecDirectory = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "api"));
-
-if (Directory.Exists(apiSpecDirectory))
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
     app.UseStaticFiles(new StaticFileOptions
     {
@@ -24,19 +91,9 @@ if (Directory.Exists(apiSpecDirectory))
 
 app.UseHttpsRedirection();
 
-var protectedPrefixes = new[]
-{
-    "/api/clients",
-    "/api/employees",
-    "/api/reservations",
-    "/api/rooms",
-    "/api/roomtypes",
-};
-
-app.UseWhen(
-    context => protectedPrefixes.Any(prefix => context.Request.Path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase)),
-    branch => branch.UseMiddleware<IsAuthenticatedMiddleware>());
+app.UseMiddleware<IsAuthenticatedMiddleware>();
 
 app.MapControllers();
 
-app.Run();
+app.MapControllers();
+
