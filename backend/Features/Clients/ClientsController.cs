@@ -1,4 +1,5 @@
 using backend.Contracts;
+using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -161,9 +162,10 @@ namespace backend.Features.Clients
           .Skip(input.Page * input.Count)
           .Take(input.Count)
           .Select(MapClient)
+          .Select(client => FieldSelector.Project(client, input.Fields))
           .ToList();
 
-        return Ok(new ClientListResponse
+        return Ok(new
         {
           Status = Status.Success,
           Data = pageData,

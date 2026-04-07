@@ -8,6 +8,8 @@ using backend.Features.Sessions;
 using backend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var envPath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
 if (File.Exists(envPath))
@@ -73,7 +75,11 @@ builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddScoped<SessionService>();
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+    });
 
 // Register built-in OpenAPI document generation.
 builder.Services.AddEndpointsApiExplorer();

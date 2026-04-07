@@ -1,4 +1,5 @@
 using backend.Contracts;
+using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -159,9 +160,10 @@ namespace backend.Features.RoomTypes
           .Skip(input.Page * input.Count)
           .Take(input.Count)
           .Select(MapRoomType)
+          .Select(roomType => FieldSelector.Project(roomType, input.Fields))
           .ToList();
 
-        return Ok(new RoomTypeListResponse
+        return Ok(new
         {
           Status = Status.Success,
           Data = pageData,

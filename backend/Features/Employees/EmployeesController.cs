@@ -1,4 +1,5 @@
 using backend.Contracts;
+using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -178,9 +179,10 @@ namespace backend.Features.Employees
           .Skip(input.Page * input.Count)
           .Take(input.Count)
           .Select(MapEmployee)
+          .Select(employee => FieldSelector.Project(employee, input.Fields))
           .ToList();
 
-        return Ok(new EmployeeListResponse
+        return Ok(new
         {
           Status = Status.Success,
           Data = pageData,

@@ -1,4 +1,5 @@
 using backend.Contracts;
+using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -176,9 +177,10 @@ namespace backend.Features.Reservations
           .Skip(input.Page * input.Count)
           .Take(input.Count)
           .Select(MapReservation)
+          .Select(reservation => FieldSelector.Project(reservation, input.Fields))
           .ToList();
 
-        return Ok(new ReservationListResponse
+        return Ok(new
         {
           Status = Status.Success,
           Data = pageData,
