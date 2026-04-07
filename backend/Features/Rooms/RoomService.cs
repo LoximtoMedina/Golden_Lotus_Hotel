@@ -39,7 +39,13 @@ namespace backend.Features.Rooms
         throw new ArgumentException("Room number is required.");
       }
 
-      room.Active = State.Available;
+      if (string.IsNullOrWhiteSpace(room.Description))
+      {
+        throw new ArgumentException("Room description is required.");
+      }
+
+      room.State = State.Avaliable;
+      room.Active = true;
       room.CreationDate = DateTime.UtcNow;
       await _repository.Create(room);
     }
@@ -52,14 +58,16 @@ namespace backend.Features.Rooms
     protected override async Task HandleDeleteAsync(int id)
     {
       Room room = await _repository.GetById(id);
-      room.Active = State.Maintenance;
+      room.State = State.Maintenance;
+      room.Active = false;
       await _repository.Update(id, room);
     }
 
     protected override async Task HandleRestoreAsync(int id)
     {
       Room room = await _repository.GetById(id);
-      room.Active = State.Available;
+      room.State = State.Avaliable;
+      room.Active = true;
       await _repository.Update(id, room);
     }
   }

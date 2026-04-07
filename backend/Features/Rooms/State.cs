@@ -2,7 +2,7 @@
 {
     public enum State
     {
-        Available,
+        Avaliable,
         Occupied,
         Maintenance,
     }

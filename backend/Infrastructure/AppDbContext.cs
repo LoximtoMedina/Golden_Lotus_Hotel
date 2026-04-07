@@ -29,6 +29,14 @@ namespace backend.Infrastructure
             modelBuilder.Entity<Employee>()
                 .Property(e => e.Role)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Room>()
+                .Property(r => r.State)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.Status)
+                .HasConversion<string>();
         }
     }
 }

@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int ClientId { get; set; }
         public int RoomId { get; set; }
+        public ReservationStatus Status { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
         public float Charge { get; set; }
