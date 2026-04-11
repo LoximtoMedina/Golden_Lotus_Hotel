@@ -27,7 +27,7 @@ export class Employees implements OnInit {
         includeDeleted: false,
         sort: {
           order: 'desc',
-        }
+        },
       });
 
       const rows = response.data ?? [];
