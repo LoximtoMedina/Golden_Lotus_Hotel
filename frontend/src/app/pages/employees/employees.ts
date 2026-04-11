@@ -21,9 +21,12 @@ export class Employees implements OnInit {
 
     try {
       const response = await employeesApi.list({
-        page: 1,
+        page: 0,
         count: 20,
         includeDeleted: false,
+        sort: {
+          order: 'desc',
+        }
       });
 
       this.employees = response.data ?? [];
