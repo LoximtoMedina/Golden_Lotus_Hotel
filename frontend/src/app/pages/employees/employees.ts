@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { employeesApi } from '../../features/employees/api';
 import type { components } from '../../types/api';
 
@@ -11,27 +11,33 @@ type Employee = components['schemas']['Employee'];
   styleUrl: './employees.css',
 })
 export class Employees implements OnInit {
-  employees: Employee[] = [];
-  loading = false;
-  error = '';
-  total = 0;
+  employees = signal<Employee[]>([]);
+  loading = signal(false);
+  error = signal('');
+  total = signal(0);
 
+  // NG when the page loads 
   async ngOnInit(): Promise<void> {
-    this.loading = true;
+    this.loading.set(true);
 
     try {
       const response = await employeesApi.list({
-        page: 1,
+        page: 0,
         count: 20,
         includeDeleted: false,
+        sort: {
+          order: 'desc',
+        }
       });
 
-      this.employees = response.data ?? [];
-      this.total = response.total ?? this.employees.length;
+      const rows = response.data ?? [];
+      this.employees.set(rows);
+      this.total.set(response.total ?? rows.length);
     } catch (error) {
-      this.error = error instanceof Error ? error.message : 'Failed to load employees';
+      console.log(error);
+      this.error.set(error instanceof Error ? error.message : 'Failed to load employees');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 }
