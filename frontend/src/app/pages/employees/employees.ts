@@ -12,10 +12,12 @@ type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
 
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
+import { Table as EmployeesTable } from '../../features/employees/components/table/table';
+
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-employees',
-  imports: [CommonModule, FormsModule, SharedComponent, AuthenticatedLayout],
+  imports: [CommonModule, FormsModule, SharedComponent, AuthenticatedLayout, EmployeesTable],
   templateUrl: './employees.html',
   styleUrls: ['./employees.css'],
 })
