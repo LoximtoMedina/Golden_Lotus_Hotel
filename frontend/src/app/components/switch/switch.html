@@ -1,0 +1,12 @@
+<div class="flex items-center gap-5 mt-auto pt-4 border-t border-slate-700">
+  <label class="relative inline-flex items-center cursor-pointer group">
+    <input type="checkbox" class="sr-only peer" [checked]="checked" (change)="toggle()" />
+    <div
+      class="w-14 h-7 bg-gray-300 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-200 peer-checked:bg-blue-600 transition-all duration-300 group-hover:bg-gray-400"
+    ></div>
+    <div
+      class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-md peer-checked:translate-x-7 transition-transform duration-300"
+    ></div>
+  </label>
+  <span class="text-sm font-semibold text-gray-700">{{ label }}</span>
+</div>

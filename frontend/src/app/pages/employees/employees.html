@@ -24,6 +24,11 @@
   <!-- Client Table -->
   <app-employees-table [records]="employees()" />
 
+  <app-switch
+    [label]="'Mostrar Registros Eliminados'"
+    (checkedChange)="handleShowDeletedChange($event)"
+  ></app-switch>
+
   <button (click)="list({ count: 3, page: 0 })">oewqjeioqwj</button>
 </app-authenticated-layout>
 
