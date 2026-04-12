@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { clientsApi } from '../../features/clients/api';
 import type { components } from '../../types/api';
 
-import { SharedComponent } from '../../components/shared/shared';
+import { SharedComponent } from '../../components/shared-layout/shared';
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
 
