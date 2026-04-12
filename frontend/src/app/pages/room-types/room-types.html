@@ -26,7 +26,10 @@
   <!-- Rooms Table -->
   <app-room-types-table [records]="roomTypes()" />
 
-  <button (click)="list({ count: 3, page: 0 })">oewqjeioqwj</button>
+  <app-switch
+    [label]="'Mostrar Registros Eliminados'"
+    (checkedChange)="handleShowDeletedChange($event)"
+  ></app-switch>
 </app-authenticated-layout>
 
 <!-- Room type Table -->

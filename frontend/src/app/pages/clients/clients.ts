@@ -14,11 +14,12 @@ type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 // Components for this page
 import { Table as ClientsTable } from '../../features/clients/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
+import { Switch } from '../../components/switch/switch';
 
 // Componente principal para la gestión de clientes
 @Component({
   selector: 'app-client',
-  imports: [CommonModule, FormsModule, AuthenticatedLayout, ClientsTable, SearchBar],
+  imports: [CommonModule, FormsModule, AuthenticatedLayout, ClientsTable, SearchBar, Switch],
   templateUrl: './clients.html',
   styleUrl: './clients.css',
 })
@@ -32,13 +33,14 @@ export class Clients implements OnInit {
   total = signal(0);
   page = signal(0);
   count = signal(20);
+  showDeleted = signal(false);
 
   // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
       count: this.count(),
-      includeDeleted: false,
+      includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
@@ -71,7 +73,7 @@ export class Clients implements OnInit {
       return this.list({
         page: 0,
         count: this.count(),
-        includeDeleted: false,
+        includeDeleted: this.showDeleted(),
         sort: {
           order: 'desc',
         },
@@ -80,13 +82,25 @@ export class Clients implements OnInit {
     await this.list({
       page: 0,
       count: this.count(),
-      includeDeleted: false,
+      includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
       search: {
         query: query,
         searchIn: ['name', 'identityNumber', 'phone'],
+      },
+    });
+  }
+
+  async handleShowDeletedChange(show: boolean): Promise<void> {
+    this.showDeleted.set(show);
+    await this.list({
+      page: 0,
+      count: this.count(),
+      includeDeleted: show,
+      sort: {
+        order: 'desc',
       },
     });
   }

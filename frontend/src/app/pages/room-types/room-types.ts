@@ -15,10 +15,11 @@ import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenti
 // Components
 import { Table as RoomTypesTable } from '../../features/room-types/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
+import { Switch } from '../../components/switch/switch';
 
 @Component({
   selector: 'app-room-types',
-  imports: [CommonModule, FormsModule, RoomTypesTable, AuthenticatedLayout, SearchBar],
+  imports: [CommonModule, FormsModule, RoomTypesTable, AuthenticatedLayout, SearchBar, Switch],
   templateUrl: './room-types.html',
   styleUrls: ['./room-types.css'],
 })
@@ -30,13 +31,14 @@ export class RoomTypes implements OnInit {
   total = signal(0);
   page = signal(0);
   count = signal(20);
+  showDeleted = signal(false);
 
   // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
       count: this.count(),
-      includeDeleted: false,
+      includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
@@ -70,7 +72,7 @@ export class RoomTypes implements OnInit {
       return this.list({
         page: 0,
         count: this.count(),
-        includeDeleted: false,
+        includeDeleted: this.showDeleted(),
         sort: {
           order: 'desc',
         },
@@ -79,13 +81,25 @@ export class RoomTypes implements OnInit {
     await this.list({
       page: 0,
       count: this.count(),
-      includeDeleted: false,
+      includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
       search: {
         query: query,
         searchIn: ['description'],
+      },
+    });
+  }
+
+  async handleShowDeletedChange(show: boolean): Promise<void> {
+    this.showDeleted.set(show);
+    await this.list({
+      page: 0,
+      count: this.count(),
+      includeDeleted: show,
+      sort: {
+        order: 'desc',
       },
     });
   }

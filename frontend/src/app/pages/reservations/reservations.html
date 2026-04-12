@@ -22,6 +22,11 @@
   ></app-search-bar>
 
   <app-reservations-table [records]="reservations()" />
+
+  <app-switch
+    [label]="'Mostrar Registros Eliminados'"
+    (checkedChange)="handleShowDeletedChange($event)"
+  ></app-switch>
 </app-authenticated-layout>
 
 <!-- Adding/Editing Modal-->

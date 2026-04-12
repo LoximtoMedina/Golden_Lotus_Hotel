@@ -23,7 +23,10 @@
   <!-- Rooms Table -->
   <app-rooms-table [records]="rooms()" />
 
-  <button (click)="list({ count: 3, page: 0 })">oewqjeioqwj</button>
+  <app-switch
+    [label]="'Mostrar Registros Eliminados'"
+    (checkedChange)="handleShowDeletedChange($event)"
+  ></app-switch>
 </app-authenticated-layout>
 
 <!-- Adding/Editing Modal-->
