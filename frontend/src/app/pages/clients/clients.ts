@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { clientsApi } from '../../features/clients/api';
 import type { components } from '../../types/api';
 
+import { SharedComponent } from '../../components/shared/shared';
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
 
@@ -10,7 +11,7 @@ type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 
 @Component({
   selector: 'app-client',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './clients.html',
   styleUrl: './clients.css',
 })
