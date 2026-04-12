@@ -37,6 +37,20 @@ namespace backend.Infrastructure
             modelBuilder.Entity<Reservation>()
                 .Property(r => r.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.Charge)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Client)
+                .WithMany()
+                .HasForeignKey(r => r.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .Navigation(r => r.Client)
+                .AutoInclude();
         }
     }
 }
