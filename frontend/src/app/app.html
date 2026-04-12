@@ -1,15 +1,1 @@
-@if (showSidebar()) {
-  <div class="flex h-screen bg-gray-100 overflow-hidden">
-    
-    <app-sidebar></app-sidebar>
-
-    <main class="flex-1 flex flex-col my-4 mr-4 overflow-hidden">
-      <div class="flex-1 bg-white border border-gray-200 rounded-3xl overflow-y-auto p-8">
-        <router-outlet></router-outlet>
-      </div>
-    </main>
-    
-  </div>
-} @else {
-  <router-outlet></router-outlet>
-}
+<router-outlet></router-outlet>

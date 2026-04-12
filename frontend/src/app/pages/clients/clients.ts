@@ -1,10 +1,11 @@
 // Librerías y tipos importados
 import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
-import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { clientsApi } from '../../features/clients/api'; // API para clientes
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
-import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
+
+import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Tipos para clientes y parámetros de listado
 type client = components['schemas']['Client'];
@@ -13,7 +14,7 @@ type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 // Componente principal para la gestión de clientes
 @Component({
   selector: 'app-client',
-  imports: [CommonModule, FormsModule, SharedComponent],
+  imports: [CommonModule, FormsModule, AuthenticatedLayout],
   templateUrl: './clients.html',
   styleUrl: './clients.css',
 })
@@ -72,19 +73,19 @@ export class Clients implements OnInit {
   currentData: any = {
     id: null,
     name: '',
-    status: 'active'
+    status: 'active',
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
     this.isEditing = false;
-   this.currentData = {
+    this.currentData = {
       id: null,
       name: '',
       identityNumber: '',
       phone: '',
       active: true,
-      creationDate: new Date().toISOString()
+      creationDate: new Date().toISOString(),
     };
     this.showFormModal = true;
   }
