@@ -1,9 +1,7 @@
-<div class="h-[calc(100vh-4rem)] bg-gray-100 p-4">
-  <div class="flex overflow-hidden rounded-3xl border border-gray-200 bg-white">
-    <app-sidebar></app-sidebar>
+<div class="h-[100vh] flex justify-space-between gap-8 p-4 bg-gray-100">
+  <app-sidebar></app-sidebar>
 
-    <div class="flex-1 h-[calc(100vh-2rem)] overflow-y-scroll min-w-0 p-4">
-      <ng-content></ng-content>
-    </div>
+  <div class="flex-1 h-[calc(100vh-4rem)] overflow-y-scroll p-6 bg-white rounded-3xl">
+    <ng-content></ng-content>
   </div>
 </div>
