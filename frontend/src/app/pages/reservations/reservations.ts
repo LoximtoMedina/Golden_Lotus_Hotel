@@ -1,24 +1,28 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { reservationsApi } from '../../features/reservations/api';
-import type { components } from '../../types/api';
-
+// Librerías y tipos importados
+import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+import { reservationsApi } from '../../features/reservations/api'; // API para reservas
+import type { components } from '../../types/api'; // Tipos generados a partir de la API
+import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
 
+// Tipos para reservas, clientes y parámetros de listado
 type reservation = components['schemas']['Reservation'];
 type Client = components['schemas']['Client'];
 type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
 type PopulatedReservation = reservation & { client: Client }
 
+// Componente principal para la gestión de empleados
 @Component({
   selector: 'app-reservations',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './reservations.html',
   styleUrl: './reservations.css',
 })
 
-
+// Componente principal para la gestión de empleados
 export class reservations implements OnInit {
+  // Estado del componente utilizando señales
   reservations = signal<PopulatedReservation[]>([]);
   loading = signal(false);
   error = signal('');
@@ -26,7 +30,7 @@ export class reservations implements OnInit {
   page = signal(0);
   count = signal(20);
 
-  // NG when the page loads 
+  // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
@@ -38,12 +42,14 @@ export class reservations implements OnInit {
     });
   }
 
+  // Función para listar clientes con manejo de estado
   async list(params: ListreservationsParams): Promise<void> {
     this.page.set(params.page);
     this.count.set(params.count);
     this.loading.set(true);
     this.error.set('');
 
+    // Llamada a la API para obtener la lista de clientes
     try {
       const response = await reservationsApi.list(params);
 
@@ -57,42 +63,43 @@ export class reservations implements OnInit {
       this.loading.set(false);
     }
   }
-  // 1. Variables de control para los Modales
+  
+  // MODALS
+  // 1. Variables de control para los Modals
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
   isEditing: boolean = false;
+  EntityType: string = 'client';
 
-  // 2. Objeto para el formulario (debe coincidir con tus [(ngModel)])
+  // 2. Objeto para el formulario
   currentData: any = {
     id: null,
     name: '',
     status: 'active'
   };
 
-  // 3. Tu lista de reservationes (esto vendrá de tu base de datos luego)
-  reservationsList: any[] = [
-    { id: 101, name: 'Juan Pérez', status: 'active' },
-    { id: 102, name: 'María López', status: 'inactive' }
-  ];
-
-  // --- FUNCIONES PARA ABRIR MODALES ---
-
+  // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
     this.isEditing = false;
-    // Limpiamos el objeto para un nuevo registro
-    this.currentData = { id: null, name: '', status: 'active' };
+   this.currentData = {
+      id: null,
+      name: '',
+      identityNumber: '',
+      phone: '',
+      active: true,
+      creationDate: new Date().toISOString()
+    };
     this.showFormModal = true;
   }
 
-  openEditModal(reservation: any) {
+  openEditModal(client: any) {
     this.isEditing = true;
-    // Usamos el "spread operator" (...) para crear una copia y no editar la tabla directamente
-    this.currentData = { ...reservation };
+    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(reservation: any) {
-    this.currentData = { ...reservation };
+  openDeleteModal(client: any) {
+    this.currentData = { ...client };
     this.showDeleteModal = true;
   }
 
@@ -101,21 +108,21 @@ export class reservations implements OnInit {
     this.showDeleteModal = false;
   }
 
-  // --- FUNCIONES DE ACCIÓN (Lógica de botones) ---
+  // Funciones de acción
 
-  saveReservation() {
+  saveEntity() {
     if (this.isEditing) {
-      console.log('Actualizando reserva:', this.currentData);
+      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para actualizar en el backend
     } else {
-      console.log('Guardando nueva reserva:', this.currentData);
+      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para guardar en el backend
     }
     this.closeModals();
   }
 
-  deleteReservation() {
-    console.log('Eliminando reserva ID:', this.currentData.id);
+  deleteEntity() {
+    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
     // Aquí irá tu código para eliminar en el backend
     this.closeModals();
   }
