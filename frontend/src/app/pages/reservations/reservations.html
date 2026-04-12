@@ -82,7 +82,7 @@
         @for (reservation of reservations(); track reservation.id) {
           <tr class="hover:bg-blue-50/30 transition-colors">
             <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">{{ reservation.id }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.clientId }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.client?.name }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.roomId }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkInDate }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkOutDate }}</td>
