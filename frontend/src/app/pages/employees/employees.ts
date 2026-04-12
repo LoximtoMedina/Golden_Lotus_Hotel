@@ -1,20 +1,26 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { employeesApi } from '../../features/employees/api';
-import type { components } from '../../types/api';
-
+// Librerías y tipos importados
+import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+import { employeesApi } from '../../features/employees/api'; // API para empleados
+import type { components } from '../../types/api'; // Tipos generados a partir de la API
+import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
 
+// Tipos para clientes y parámetros de listado
 type Employee = components['schemas']['Employee'];
 type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
 
+// Componente principal para la gestión de empleados
 @Component({
   selector: 'app-employees',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
 })
+
+// Componente principal para la gestión de empleados
 export class Employees implements OnInit {
+  // Estado del componente utilizando señales
   employees = signal<Employee[]>([]);
   loading = signal(false);
   error = signal('');
@@ -22,7 +28,7 @@ export class Employees implements OnInit {
   page = signal(0);
   count = signal(20);
 
-  // NG when the page loads 
+  // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
@@ -34,12 +40,14 @@ export class Employees implements OnInit {
     });
   }
 
+  // Función para listar clientes con manejo de estado
   async list(params: ListEmployeesParams): Promise<void> {
     this.page.set(params.page);
     this.count.set(params.count);
     this.loading.set(true);
     this.error.set('');
 
+    // Llamada a la API para obtener la lista de clientes
     try {
       const response = await employeesApi.list(params);
 
@@ -54,46 +62,36 @@ export class Employees implements OnInit {
     }
   }
 
-  // TEMPORAL
-    // 1. Variables de control para los Modales
+  // MODALS
+  // 1. Variables de control para los Modals
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
   isEditing: boolean = false;
+  EntityType: string = 'client';
 
-  // 2. Objeto para el formulario (debe coincidir con tus [(ngModel)])
+  // 2. Objeto para el formulario
   currentData: any = {
     id: null,
     name: '',
     status: 'active'
   };
 
-  // 3. Tu lista de clientes (esto vendrá de tu base de datos luego)
-  clientsList: any[] = [
-    { id: 101, name: 'Juan Pérez', status: 'active' },
-    { id: 102, name: 'María López', status: 'inactive' }
-  ];
-
-  // --- FUNCIONES PARA ABRIR MODALES ---
-
+  // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
     this.isEditing = false;
    this.currentData = {
       id: null,
+      name: '',
       identityNumber: '',
       phone: '',
-      salary: 0,
-      name: '',
-      email: '',
-      accessKey: '',
-      role: '',
-      active: true
+      active: true,
+      creationDate: new Date().toISOString()
     };
     this.showFormModal = true;
   }
 
   openEditModal(client: any) {
     this.isEditing = true;
-    // Usamos el "spread operator" (...) para crear una copia y no editar la tabla directamente
     this.currentData = { ...client };
     this.showFormModal = true;
   }
@@ -108,21 +106,21 @@ export class Employees implements OnInit {
     this.showDeleteModal = false;
   }
 
-  // --- FUNCIONES DE ACCIÓN (Lógica de botones) ---
+  // Funciones de acción
 
-  saveEmployee() {
+  saveEntity() {
     if (this.isEditing) {
-      console.log('Actualizando empleado:', this.currentData);
+      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para actualizar en el backend
     } else {
-      console.log('Guardando nuevo empleado:', this.currentData);
+      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para guardar en el backend
     }
     this.closeModals();
   }
 
-  deleteEmployee() {
-    console.log('Eliminando empleado ID:', this.currentData.id);
+  deleteEntity() {
+    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
     // Aquí irá tu código para eliminar en el backend
     this.closeModals();
   }
