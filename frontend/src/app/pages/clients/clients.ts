@@ -1,16 +1,61 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, signal } from '@angular/core';
+import { clientsApi } from '../../features/clients/api';
+import type { components } from '../../types/api';
+
+import { CommonModule } from '@angular/common'; // Para *ngIf
+import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+
+type client = components['schemas']['Client'];
+type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 
 @Component({
-  selector: 'app-clients',
-  standalone: true,
+  selector: 'app-client',
   imports: [CommonModule, FormsModule],
   templateUrl: './clients.html',
-  styleUrl: './clients.css'
+  styleUrl: './clients.css',
 })
-export class Clients {
-  // 1. Variables de control para los Modales
+export class Clients implements OnInit {
+  clients = signal<client[]>([]);
+  loading = signal(false);
+  error = signal('');
+  total = signal(0);
+  page = signal(0);
+  count = signal(20);
+
+  // NG when the page loads 
+  async ngOnInit(): Promise<void> {
+    await this.list({
+      page: this.page(),
+      count: this.count(),
+      includeDeleted: false,
+      sort: {
+        order: 'desc',
+      },
+    });
+  }
+
+  async list(params: ListclientsParams): Promise<void> {
+    this.page.set(params.page);
+    this.count.set(params.count);
+    this.loading.set(true);
+    this.error.set('');
+
+    try {
+      const response = await clientsApi.list(params);
+
+      const rows = response.data ?? [];
+      this.clients.set(rows);
+      this.total.set(response.total ?? rows.length);
+    } catch (error) {
+      console.log(error);
+      this.error.set(error instanceof Error ? error.message : 'Failed to load clients');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // TEMPORAL
+    // 1. Variables de control para los Modales
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
   isEditing: boolean = false;
@@ -32,8 +77,17 @@ export class Clients {
 
   openAddModal() {
     this.isEditing = false;
-    // Limpiamos el objeto para un nuevo registro
-    this.currentData = { id: null, name: '', status: 'active' };
+   this.currentData = {
+      id: null,
+      identityNumber: '',
+      phone: '',
+      salary: 0,
+      name: '',
+      email: '',
+      accessKey: '',
+      role: '',
+      active: true
+    };
     this.showFormModal = true;
   }
 
@@ -56,7 +110,7 @@ export class Clients {
 
   // --- FUNCIONES DE ACCIÓN (Lógica de botones) ---
 
-  saveClient() {
+  saveclient() {
     if (this.isEditing) {
       console.log('Actualizando cliente:', this.currentData);
       // Aquí irá tu código para actualizar en el backend
@@ -67,7 +121,7 @@ export class Clients {
     this.closeModals();
   }
 
-  deleteClient() {
+  deleteclient() {
     console.log('Eliminando cliente ID:', this.currentData.id);
     // Aquí irá tu código para eliminar en el backend
     this.closeModals();
