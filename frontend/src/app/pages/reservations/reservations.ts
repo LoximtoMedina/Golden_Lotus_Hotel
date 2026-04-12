@@ -1,21 +1,26 @@
 // Librerías y tipos importados
 import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
-import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { reservationsApi } from '../../features/reservations/api'; // API para reservas
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
+import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Tipos para reservas, clientes y parámetros de listado
 type reservation = components['schemas']['Reservation'];
 type Client = components['schemas']['Client'];
+type PopulatedReservation = reservation & { client: Client };
 type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
-type PopulatedReservation = reservation & { client: Client }
+
+// Components
+import { Table as ReservationsTable } from '../../features/reservations/components/table/table';
+import { SearchBar } from '../../components/search-bar/search-bar';
 
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-reservations',
-  imports: [CommonModule, FormsModule, SharedComponent],
+  imports: [CommonModule, FormsModule, AuthenticatedLayout, ReservationsTable, SearchBar],
   templateUrl: './reservations.html',
   styleUrls: ['./reservations.css'],
 })
@@ -63,7 +68,32 @@ export class reservations implements OnInit {
       this.loading.set(false);
     }
   }
-  
+
+  async handleSearch(query: string): Promise<void> {
+    if (!query) {
+      return this.list({
+        page: 0,
+        count: this.count(),
+        includeDeleted: false,
+        sort: {
+          order: 'desc',
+        },
+      });
+    }
+    await this.list({
+      page: 0,
+      count: this.count(),
+      includeDeleted: false,
+      sort: {
+        order: 'desc',
+      },
+      search: {
+        query: query,
+        searchIn: ['status'],
+      },
+    });
+  }
+
   // MODALS
   // 1. Variables de control para los Modals
   showFormModal: boolean = false;
@@ -75,19 +105,19 @@ export class reservations implements OnInit {
   currentData: any = {
     id: null,
     name: '',
-    status: 'active'
+    status: 'active',
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
     this.isEditing = false;
-   this.currentData = {
+    this.currentData = {
       id: null,
       name: '',
       identityNumber: '',
       phone: '',
       active: true,
-      creationDate: new Date().toISOString()
+      creationDate: new Date().toISOString(),
     };
     this.showFormModal = true;
   }

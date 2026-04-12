@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { components } from '../../../../types/api';
 
-
 type Client = components['schemas']['Client'];
 
 @Component({

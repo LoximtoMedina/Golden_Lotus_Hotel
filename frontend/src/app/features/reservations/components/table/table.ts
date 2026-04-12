@@ -1,9 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { components } from '../../../../types/api';
+
+type reservation = components['schemas']['Reservation'];
+type Client = components['schemas']['Client'];
+type PopulatedReservation = reservation & { client: Client };
 
 @Component({
-  selector: 'app-table',
+  selector: 'app-reservations-table',
   imports: [],
   templateUrl: './table.html',
   styleUrl: './table.css',
 })
-export class Table {}
+export class Table {
+  @Input() records: PopulatedReservation[] = [];
+  @Input() totalRecords: number = 0;
+
+  @Output() onDelete = new EventEmitter<void>();
+  @Output() onEdit = new EventEmitter<void>();
+}

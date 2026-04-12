@@ -11,10 +11,14 @@ import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenti
 type client = components['schemas']['Client'];
 type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 
+// Components for this page
+import { Table as ClientsTable } from '../../features/clients/components/table/table';
+import { SearchBar } from '../../components/search-bar/search-bar';
+
 // Componente principal para la gestión de clientes
 @Component({
   selector: 'app-client',
-  imports: [CommonModule, FormsModule, AuthenticatedLayout],
+  imports: [CommonModule, FormsModule, AuthenticatedLayout, ClientsTable, SearchBar],
   templateUrl: './clients.html',
   styleUrl: './clients.css',
 })
@@ -60,6 +64,31 @@ export class Clients implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  async handleSearch(query: string): Promise<void> {
+    if (!query) {
+      return this.list({
+        page: 0,
+        count: this.count(),
+        includeDeleted: false,
+        sort: {
+          order: 'desc',
+        },
+      });
+    }
+    await this.list({
+      page: 0,
+      count: this.count(),
+      includeDeleted: false,
+      sort: {
+        order: 'desc',
+      },
+      search: {
+        query: query,
+        searchIn: ['name', 'identityNumber', 'phone'],
+      },
+    });
   }
 
   // MODALS

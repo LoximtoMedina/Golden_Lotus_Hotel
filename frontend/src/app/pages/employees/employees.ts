@@ -4,20 +4,21 @@ import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { employeesApi } from '../../features/employees/api'; // API para empleados
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
-import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
+
+import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Tipos para clientes y parámetros de listado
 type Employee = components['schemas']['Employee'];
 type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
 
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
-
+// Components
 import { Table as EmployeesTable } from '../../features/employees/components/table/table';
+import { SearchBar } from '../../components/search-bar/search-bar';
 
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-employees',
-  imports: [CommonModule, FormsModule, SharedComponent, AuthenticatedLayout, EmployeesTable],
+  imports: [CommonModule, FormsModule, AuthenticatedLayout, EmployeesTable, SearchBar],
   templateUrl: './employees.html',
   styleUrls: ['./employees.css'],
 })
@@ -66,6 +67,31 @@ export class Employees implements OnInit {
     }
   }
 
+  async handleSearch(query: string): Promise<void> {
+    if (!query) {
+      return this.list({
+        page: 0,
+        count: this.count(),
+        includeDeleted: false,
+        sort: {
+          order: 'desc',
+        },
+      });
+    }
+    await this.list({
+      page: 0,
+      count: this.count(),
+      includeDeleted: false,
+      sort: {
+        order: 'desc',
+      },
+      search: {
+        query: query,
+        searchIn: ['name', 'identityNumber', 'phone'],
+      },
+    });
+  }
+
   // MODALS
   // 1. Variables de control para los Modals
   showFormModal: boolean = false;
@@ -111,8 +137,7 @@ export class Employees implements OnInit {
   }
 
   // Funciones de acción
-
-  saveEntity() {
+  async saveEntity() {
     if (this.isEditing) {
       console.log(`Actualizando ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para actualizar en el backend
