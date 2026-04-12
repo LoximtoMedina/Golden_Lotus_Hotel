@@ -17,7 +17,7 @@ type PopulatedReservation = reservation & { client: Client }
   selector: 'app-reservations',
   imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './reservations.html',
-  styleUrl: './reservations.css',
+  styleUrls: ['./reservations.css'],
 })
 
 // Componente principal para la gestión de empleados
