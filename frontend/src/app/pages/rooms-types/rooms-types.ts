@@ -9,8 +9,9 @@ import { SharedComponent } from '../../components/shared-layout/shared'; // Impo
   selector: 'app-rooms-types',
   imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './rooms-types.html',
-  styleUrl: './rooms-types.css',
+  styleUrls: ['./rooms-types.css'],
 })
+
 export class RoomsTypes {
   // MODALS
   // 1. Variables de control para los Modals

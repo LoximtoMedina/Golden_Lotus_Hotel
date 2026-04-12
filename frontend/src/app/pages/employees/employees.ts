@@ -15,7 +15,7 @@ type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
   selector: 'app-employees',
   imports: [CommonModule, FormsModule, SharedComponent],
   templateUrl: './employees.html',
-  styleUrl: './employees.css',
+  styleUrls: ['./employees.css'],
 })
 
 // Componente principal para la gestión de empleados
