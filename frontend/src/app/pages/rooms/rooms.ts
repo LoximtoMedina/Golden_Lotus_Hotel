@@ -14,10 +14,11 @@ import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenti
 // Components
 import { Table as RoomsTable } from '../../features/rooms/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
+import { Switch } from '../../components/switch/switch';
 
 @Component({
   selector: 'app-rooms',
-  imports: [CommonModule, FormsModule, RoomsTable, SearchBar, AuthenticatedLayout],
+  imports: [CommonModule, FormsModule, RoomsTable, SearchBar, AuthenticatedLayout, Switch],
   templateUrl: './rooms.html',
   styleUrls: ['./rooms.css'],
 })
