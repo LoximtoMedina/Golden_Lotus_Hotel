@@ -29,11 +29,13 @@ namespace backend.Features.Reservations
           Status = MapStatus(input.Status),
           CheckInDate = input.CheckInDate.UtcDateTime,
           CheckOutDate = input.CheckOutDate.UtcDateTime,
-          Charge = (float)input.Charge,
+          Charge = (decimal)input.Charge,
           Active = true,
         };
 
         await _service.CreateAsync(reservation);
+
+        reservation = await _service.GetByIdAsync(reservation.Id);
 
         return Ok(new ReservationDataResponse
         {
@@ -60,10 +62,12 @@ namespace backend.Features.Reservations
         reservation.Status = MapStatus(input.Status);
         if (input.CheckInDate != default) reservation.CheckInDate = input.CheckInDate.UtcDateTime;
         if (input.CheckOutDate != default) reservation.CheckOutDate = input.CheckOutDate.UtcDateTime;
-        if (input.Charge > 0) reservation.Charge = (float)input.Charge;
+        if (input.Charge > 0) reservation.Charge = (decimal)input.Charge;
         reservation.Active = input.Active;
 
         await _service.UpdateAsync(input.ReservationId, reservation);
+
+        reservation = await _service.GetByIdAsync(input.ReservationId);
 
         return Ok(new ReservationDataResponse
         {
@@ -172,6 +176,8 @@ namespace backend.Features.Reservations
           _ => query.OrderByDescending(r => r.CreationDate),
         };
 
+
+
         var total = query.Count();
         var pageData = query
           .Skip(input.Page * input.Count)
@@ -248,11 +254,20 @@ namespace backend.Features.Reservations
       {
         Id = entity.Id,
         ClientId = entity.ClientId,
+        Client = entity.Client is null ? null : new backend.Contracts.Client
+        {
+          Id = entity.Client.Id,
+          Name = entity.Client.Name,
+          IdentityNumber = entity.Client.IdentityNumber,
+          Phone = entity.Client.Phone,
+          Active = entity.Client.Active,
+          CreationDate = new DateTimeOffset(entity.Client.CreationDate),
+        },
         RoomId = entity.RoomId,
         Status = MapStatus(entity.Status),
         CheckInDate = new DateTimeOffset(entity.CheckInDate),
         CheckOutDate = new DateTimeOffset(entity.CheckOutDate),
-        Charge = entity.Charge,
+        Charge = (double)entity.Charge,
         Active = entity.Active,
         CreationDate = new DateTimeOffset(entity.CreationDate),
       };
