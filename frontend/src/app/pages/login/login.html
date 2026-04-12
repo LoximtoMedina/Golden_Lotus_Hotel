@@ -1,0 +1,48 @@
+<div class="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+    
+    <div class="px-8 pt-10 pb-6 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-2xl mb-4 shadow-lg shadow-blue-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800">Bienvenido</h2>
+      <p class="text-slate-500 mt-2">Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()" class="px-8 pb-10 space-y-6">
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase ml-1">Correo Electrónico</label>
+        <input 
+          type="email" 
+          [(ngModel)]="credentials.email" 
+          name="email"
+          placeholder="nombre@ejemplo.com"
+          class="w-full p-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+          required
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-700 uppercase ml-1">Contraseña</label>
+        <input 
+          type="password" 
+          [(ngModel)]="credentials.password" 
+          name="password"
+          placeholder="••••••••"
+          class="w-full p-3 rounded-xl border-2 border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+          required
+        />
+      </div>
+
+      <button 
+        type="submit"
+        class="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
+      >
+        Iniciar Sesión
+      </button>
+    </form>
+    
+  </div>
+</div>
