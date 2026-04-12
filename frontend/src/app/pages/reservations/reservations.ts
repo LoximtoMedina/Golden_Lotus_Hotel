@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { reservationsApi } from '../../features/reservations/api';
+import type { components } from '../../types/api';
 
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+
+type reservation = components['schemas']['Reservation'];
+type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
 
 @Component({
   selector: 'app-reservations',
@@ -10,7 +15,46 @@ import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
   styleUrl: './reservations.css',
 })
 
-export class Reservations {
+
+export class reservations implements OnInit {
+  reservations = signal<reservation[]>([]);
+  loading = signal(false);
+  error = signal('');
+  total = signal(0);
+  page = signal(0);
+  count = signal(20);
+
+  // NG when the page loads 
+  async ngOnInit(): Promise<void> {
+    await this.list({
+      page: this.page(),
+      count: this.count(),
+      includeDeleted: false,
+      sort: {
+        order: 'desc',
+      },
+    });
+  }
+
+  async list(params: ListreservationsParams): Promise<void> {
+    this.page.set(params.page);
+    this.count.set(params.count);
+    this.loading.set(true);
+    this.error.set('');
+
+    try {
+      const response = await reservationsApi.list(params);
+
+      const rows = response.data ?? [];
+      this.reservations.set(rows);
+      this.total.set(response.total ?? rows.length);
+    } catch (error) {
+      console.log(error);
+      this.error.set(error instanceof Error ? error.message : 'Failed to load reservations');
+    } finally {
+      this.loading.set(false);
+    }
+  }
   // 1. Variables de control para los Modales
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
@@ -23,8 +67,8 @@ export class Reservations {
     status: 'active'
   };
 
-  // 3. Tu lista de clientes (esto vendrá de tu base de datos luego)
-  clientsList: any[] = [
+  // 3. Tu lista de reservationes (esto vendrá de tu base de datos luego)
+  reservationsList: any[] = [
     { id: 101, name: 'Juan Pérez', status: 'active' },
     { id: 102, name: 'María López', status: 'inactive' }
   ];
@@ -38,15 +82,15 @@ export class Reservations {
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  openEditModal(reservation: any) {
     this.isEditing = true;
     // Usamos el "spread operator" (...) para crear una copia y no editar la tabla directamente
-    this.currentData = { ...client };
+    this.currentData = { ...reservation };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  openDeleteModal(reservation: any) {
+    this.currentData = { ...reservation };
     this.showDeleteModal = true;
   }
 

@@ -82,14 +82,12 @@
         @for (reservation of reservations(); track reservation.id) {
           <tr class="hover:bg-blue-50/30 transition-colors">
             <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">{{ reservation.id }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.identityNumber }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.name }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.phone }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.clientId }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.roomId }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkInDate }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkOutDate }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
-              {{ reservation.email }}
-            </td>
-            <td class="whitespace-nowrap px-6 py-4 text-green-700 font-mono font-bold">
-              L. {{ reservation.salary }}
+              {{ reservation.charge }}
             </td>
 
             <td class="flex items-center justify-center space-x-2 px-6 py-4">
