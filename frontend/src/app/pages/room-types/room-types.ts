@@ -2,35 +2,36 @@
 import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
+import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
 
-import { roomsApi } from '../../features/rooms/api'; // API para empleados
-import { components } from '../../types/api';
+import roomTypesApi from '../../features/room-types/api';
+import type { components } from '../../types/api'; // Tipos generados a partir de la API
 
-type Room = components['schemas']['Room'];
-type ListRoomsParams = Parameters<typeof roomsApi.list>[0];
+type RoomType = components['schemas']['RoomType'];
+type ListRoomTypesParams = Parameters<typeof roomTypesApi.list>[0];
 
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Components
-import { Table as RoomsTable } from '../../features/rooms/components/table/table';
+import { Table as RoomTypesTable } from '../../features/room-types/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 
 @Component({
-  selector: 'app-rooms',
-  imports: [CommonModule, FormsModule, RoomsTable, SearchBar, AuthenticatedLayout],
-  templateUrl: './rooms.html',
-  styleUrls: ['./rooms.css'],
+  selector: 'app-room-types',
+  imports: [CommonModule, FormsModule, RoomTypesTable, AuthenticatedLayout, SearchBar],
+  templateUrl: './room-types.html',
+  styleUrls: ['./room-types.css'],
 })
-export class Rooms implements OnInit {
+export class RoomTypes implements OnInit {
   // Estado del componente utilizando señales
-  rooms = signal<Room[]>([]);
+  roomTypes = signal<RoomType[]>([]);
   loading = signal(false);
   error = signal('');
   total = signal(0);
   page = signal(0);
   count = signal(20);
 
-  // Inicialización de la lista de habitaciones al cargar el componente
+  // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
@@ -42,22 +43,8 @@ export class Rooms implements OnInit {
     });
   }
 
-  // MODALS
-  // 1. Variables de control para los Modals
-  showFormModal: boolean = false;
-  showDeleteModal: boolean = false;
-  isEditing: boolean = false;
-  EntityType: string = 'client';
-
-  // 2. Objeto para el formulario
-  currentData: any = {
-    id: null,
-    name: '',
-    status: 'active',
-  };
-
   // Función para listar clientes con manejo de estado
-  async list(params: ListRoomsParams): Promise<void> {
+  async list(params: ListRoomTypesParams): Promise<void> {
     this.page.set(params.page);
     this.count.set(params.count);
     this.loading.set(true);
@@ -65,16 +52,14 @@ export class Rooms implements OnInit {
 
     // Llamada a la API para obtener la lista de clientes
     try {
-      const response = await roomsApi.list(params);
-
-      console.log(response);
+      const response = await roomTypesApi.list(params);
 
       const rows = response.data ?? [];
-      this.rooms.set(rows);
+      this.roomTypes.set(rows);
       this.total.set(response.total ?? rows.length);
     } catch (error) {
       console.log(error);
-      this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
+      this.error.set(error instanceof Error ? error.message : 'Failed to load room types');
     } finally {
       this.loading.set(false);
     }
@@ -100,10 +85,24 @@ export class Rooms implements OnInit {
       },
       search: {
         query: query,
-        searchIn: ['number', 'description'],
+        searchIn: ['description'],
       },
     });
   }
+
+  // MODALS
+  // 1. Variables de control para los Modals
+  showFormModal: boolean = false;
+  showDeleteModal: boolean = false;
+  isEditing: boolean = false;
+  EntityType: string = 'client';
+
+  // 2. Objeto para el formulario
+  currentData: any = {
+    id: null,
+    name: '',
+    status: 'active',
+  };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
