@@ -6,7 +6,9 @@ import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
 
 type reservation = components['schemas']['Reservation'];
+type Client = components['schemas']['Client'];
 type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
+type PopulatedReservation = reservation & { client: Client }
 
 @Component({
   selector: 'app-reservations',
@@ -17,7 +19,7 @@ type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
 
 
 export class reservations implements OnInit {
-  reservations = signal<reservation[]>([]);
+  reservations = signal<PopulatedReservation[]>([]);
   loading = signal(false);
   error = signal('');
   total = signal(0);
@@ -46,7 +48,7 @@ export class reservations implements OnInit {
       const response = await reservationsApi.list(params);
 
       const rows = response.data ?? [];
-      this.reservations.set(rows);
+      this.reservations.set(rows as PopulatedReservation[]);
       this.total.set(response.total ?? rows.length);
     } catch (error) {
       console.log(error);
