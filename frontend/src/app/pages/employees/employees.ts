@@ -2,12 +2,15 @@ import { Component, OnInit, signal } from '@angular/core';
 import { employeesApi } from '../../features/employees/api';
 import type { components } from '../../types/api';
 
+import { CommonModule } from '@angular/common'; // Para *ngIf
+import { FormsModule } from '@angular/forms';   // Para [(ngModel)]
+
 type Employee = components['schemas']['Employee'];
 type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
 
 @Component({
   selector: 'app-employees',
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './employees.html',
   styleUrl: './employees.css',
 })
@@ -16,7 +19,7 @@ export class Employees implements OnInit {
   loading = signal(false);
   error = signal('');
   total = signal(0);
-  page = signal(1);
+  page = signal(0);
   count = signal(20);
 
   // NG when the page loads 
@@ -49,5 +52,78 @@ export class Employees implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  // TEMPORAL
+    // 1. Variables de control para los Modales
+  showFormModal: boolean = false;
+  showDeleteModal: boolean = false;
+  isEditing: boolean = false;
+
+  // 2. Objeto para el formulario (debe coincidir con tus [(ngModel)])
+  currentData: any = {
+    id: null,
+    name: '',
+    status: 'active'
+  };
+
+  // 3. Tu lista de clientes (esto vendrá de tu base de datos luego)
+  clientsList: any[] = [
+    { id: 101, name: 'Juan Pérez', status: 'active' },
+    { id: 102, name: 'María López', status: 'inactive' }
+  ];
+
+  // --- FUNCIONES PARA ABRIR MODALES ---
+
+  openAddModal() {
+    this.isEditing = false;
+   this.currentData = {
+      id: null,
+      identityNumber: '',
+      phone: '',
+      salary: 0,
+      name: '',
+      email: '',
+      accessKey: '',
+      role: '',
+      active: true
+    };
+    this.showFormModal = true;
+  }
+
+  openEditModal(client: any) {
+    this.isEditing = true;
+    // Usamos el "spread operator" (...) para crear una copia y no editar la tabla directamente
+    this.currentData = { ...client };
+    this.showFormModal = true;
+  }
+
+  openDeleteModal(client: any) {
+    this.currentData = { ...client };
+    this.showDeleteModal = true;
+  }
+
+  closeModals() {
+    this.showFormModal = false;
+    this.showDeleteModal = false;
+  }
+
+  // --- FUNCIONES DE ACCIÓN (Lógica de botones) ---
+
+  saveEmployee() {
+    if (this.isEditing) {
+      console.log('Actualizando empleado:', this.currentData);
+      // Aquí irá tu código para actualizar en el backend
+    } else {
+      console.log('Guardando nuevo empleado:', this.currentData);
+      // Aquí irá tu código para guardar en el backend
+    }
+    this.closeModals();
+  }
+
+  deleteEmployee() {
+    console.log('Eliminando empleado ID:', this.currentData.id);
+    // Aquí irá tu código para eliminar en el backend
+    this.closeModals();
   }
 }

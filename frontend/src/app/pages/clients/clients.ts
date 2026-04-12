@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para [(ngModel)]
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-clients',

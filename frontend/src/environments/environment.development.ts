@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: "http://190.181.217.130:5087/",
+  apiUrl: "https://tareapoo.asterki.xyz/",
 };
