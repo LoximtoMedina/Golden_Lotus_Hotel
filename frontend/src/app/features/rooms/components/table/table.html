@@ -21,7 +21,7 @@
           <td class="px-6 py-4 flex space-x-3">
             <button
               title="Editar Registro"
-              (click)="handleEditButtonClick()"
+              (click)="handleEditButtonClick(room.id)"
               class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
             >
               <svg
@@ -42,7 +42,7 @@
 
             <button
               title="Eliminar Registro"
-              (click)="handleDeleteButtonClick()"
+              (click)="handleDeleteButtonClick(room.id)"
               class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
             >
               <svg

@@ -23,7 +23,7 @@
     (onButtonClick)="openAddModal()"
   ></app-search-bar>
 
-  <app-clients-table [records]="clients()" />
+  <app-clients-table [records]="clients()" (onEditButtonClick)="openEditModal($event)" (onDeleteButtonClick)="openDeleteModal($event)"/>
 
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
     <app-switch

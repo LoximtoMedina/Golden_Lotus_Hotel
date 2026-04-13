@@ -13,14 +13,14 @@ export class Table {
   @Input() records: Client[] = [];
   @Input() totalRecords: number = 0;
 
-  @Output() onDeleteButtonClick = new EventEmitter<void>();
-  @Output() onEditButtonClick = new EventEmitter<void>();
+  @Output() onDeleteButtonClick = new EventEmitter<number>();
+  @Output() onEditButtonClick = new EventEmitter<number>();
  
-  handleEditButtonClick() {
-    this.onEditButtonClick.emit();
+  handleEditButtonClick(id: number) {
+    this.onEditButtonClick.emit(id);
   }
   
-  handleDeleteButtonClick() {
-    this.onDeleteButtonClick.emit();
+  handleDeleteButtonClick(id: number) {
+    this.onDeleteButtonClick.emit(id);
   }
 }
