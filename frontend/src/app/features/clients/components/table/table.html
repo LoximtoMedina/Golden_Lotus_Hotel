@@ -17,7 +17,15 @@
       <tbody class="divide-y divide-slate-300">
         @for (client of records; track client.id) {
           <tr class="hover:bg-blue-50/30 transition-colors">
-            <td class="px-6 py-4 text-gray-800 font-medium">{{ client.id }}</td>
+            <td class="px-6 py-4 text-gray-800 font-medium">{{ client.id }}
+              @if (client.active == false) {
+                <span
+                  class="ml-2 px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"
+                >
+                  Eliminado
+                </span>
+              }
+            </td>
             <td class="px-6 py-4 text-gray-900">{{ client.name }}</td>
             <td class="px-6 py-4 text-gray-700">{{ client.identityNumber }}</td>
             <td class="px-6 py-4 text-gray-700">{{ client.phone }}</td>
@@ -44,27 +52,50 @@
                 </svg>
               </button>
 
-              <!-- Delete Button -->
-              <button
-                title="Eliminar Registro"
-                (click)="handleDeleteButtonClick(client.id)"
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-red-50 hover:scale-105 active:scale-95 group"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="red"
-                  viewBox="0 0 16 16"
+              @if (client.active == true) {
+                <!-- Delete Button -->
+                <button
+                  title="Eliminar Registro"
+                  (click)="handleDeleteButtonClick(client.id)"
+                  class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-red-50 hover:scale-105 active:scale-95 group"
                 >
-                  <path
-                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="red"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                    />
+                  </svg>
+                </button>
+              } @else {
+                <!-- Restore Button -->
+                <button
+                  title="Restaurar Registro"
+                  (click)="handleRestoreButtonClick(client.id)"
+                  class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-green-600 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                  </svg>
+                </button>
+              }
             </td>
           </tr>
         }

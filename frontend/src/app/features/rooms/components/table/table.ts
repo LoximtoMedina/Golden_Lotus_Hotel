@@ -15,6 +15,7 @@ export class Table {
 
   @Output() onDeleteButtonClick = new EventEmitter<number>();
   @Output() onEditButtonClick = new EventEmitter<number>();
+  @Output() onRestoreButtonClick = new EventEmitter<number>();
  
   handleEditButtonClick(id: number) {
     this.onEditButtonClick.emit(id);
@@ -22,5 +23,9 @@ export class Table {
   
   handleDeleteButtonClick(id: number) {
     this.onDeleteButtonClick.emit(id);
+  }
+
+  handleRestoreButtonClick(id: number) {
+    this.onRestoreButtonClick.emit(id);
   }
 }
