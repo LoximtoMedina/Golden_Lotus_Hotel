@@ -83,23 +83,23 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">DNI</label>
-        <input
-          type="text"
-          [(ngModel)]="currentData.dni"
-          name="name"
-          placeholder="Ej. 0301-2006-02367"
-          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
-        />
-      </div>
-
-      <div class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">Full Name</label>
         <input
           type="text"
           [(ngModel)]="currentData.name"
           name="name"
           placeholder="Ej. Cristian Josué Medina Galeano"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">DNI</label>
+        <input
+          type="text"
+          [(ngModel)]="currentData.dni"
+          name="name"
+          placeholder="Ej. 0301-2006-02367"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
@@ -118,8 +118,8 @@
       <div *ngIf="isEditing" class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">Active</label>
         <input
-          type="text"
-          [value]="currentData.active"
+          type="checkbox"
+          [checked]="currentData.active"
           disabled
           class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
         />
@@ -128,7 +128,7 @@
       <div *ngIf="isEditing" class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">CreationDate</label>
         <input
-          type="text"
+          type="date"
           [value]="currentData.creationDate"
           disabled
           class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
