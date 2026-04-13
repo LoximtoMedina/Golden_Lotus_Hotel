@@ -6,6 +6,7 @@ import { reservationsApi } from '../../features/reservations/api'; // API para r
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
+import { ChangeDetectorRef } from '@angular/core';
 
 // Tipos para reservas, clientes y parámetros de listado
 type reservation = components['schemas']['Reservation'];
@@ -126,6 +127,8 @@ export class reservations implements OnInit {
   }
 
   // MODALS
+  constructor(private cdr: ChangeDetectorRef) {}
+
   // 1. Variables de control para los Modals
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
@@ -159,10 +162,11 @@ export class reservations implements OnInit {
     // @ts-ignore
     if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
-    }
+      this.isEditing = true;
+      this.showFormModal = true;
 
-    this.isEditing = true;
-    this.showFormModal = true;
+      this.cdr.detectChanges();
+    }
   }
 
   async openDeleteModal(reservation: any) {
@@ -171,9 +175,10 @@ export class reservations implements OnInit {
     // @ts-ignore
     if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
-    }
+      this.showDeleteModal = true;
 
-    this.showDeleteModal = true;
+      this.cdr.detectChanges();
+    }
   }
 
   closeModals() {

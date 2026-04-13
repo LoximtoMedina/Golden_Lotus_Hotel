@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { employeesApi } from '../../features/employees/api'; // API para empleados
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
-
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
+import { ChangeDetectorRef } from '@angular/core';
 
 // Tipos para clientes y parámetros de listado
 type Employee = components['schemas']['Employee'];
@@ -118,6 +118,8 @@ export class Employees implements OnInit {
   }
 
   // MODALS
+  constructor(private cdr: ChangeDetectorRef) {}
+
   // 1. Variables de control para los Modals
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
@@ -151,10 +153,11 @@ export class Employees implements OnInit {
     // @ts-ignore
     if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
-    }
+      this.isEditing = true;
+      this.showFormModal = true;
 
-    this.isEditing = true;
-    this.showFormModal = true;
+      this.cdr.detectChanges();
+    }
   }
 
   async openDeleteModal(employee: any) {
@@ -163,9 +166,10 @@ export class Employees implements OnInit {
     // @ts-ignore
     if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
-    }
+      this.showDeleteModal = true;
 
-    this.showDeleteModal = true;
+      this.cdr.detectChanges();
+    }
   }
 
   closeModals() {
