@@ -27,28 +27,28 @@
             <td class="px-6 py-4 text-gray-900">{{ room_type.maxOccupancy }}</td>
             <td class="px-6 py-4 text-gray-700">{{ room_type.price }}</td>
             <td class="px-6 py-4 flex space-x-3">
-              <button
-                title="Editar Registro"
-                (click)="handleEditButtonClick(room_type.id)"
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-slate-50 hover:scale-105 active:scale-95 group"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-              </button>
-
               @if (room_type.active == true) {
+                <button
+                  title="Editar Registro"
+                  (click)="handleEditButtonClick(room_type.id)"
+                  class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-slate-50 hover:scale-105 active:scale-95 group"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    />
+                  </svg>
+                </button>
+
                 <!-- Delete Button -->
                 <button
                   title="Eliminar Registro"
@@ -79,7 +79,7 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-5 w-5 group-hover:-rotate-360 transition-transform duration-300"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
