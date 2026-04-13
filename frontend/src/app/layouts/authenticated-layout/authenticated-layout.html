@@ -2,8 +2,16 @@
   <div class="flex items-center justify-center flex-1 w-full">
     <app-sidebar></app-sidebar>
 
-    <div class="flex-1 h-[calc(100vh-4rem)] overflow-y-scroll w-full p-6 bg-white mr-4 rounded-3xl">
+    <div
+      *ngIf="!isCheckingAuth()"
+      class="flex-1 h-[calc(100vh-4rem)] overflow-y-scroll w-full p-6 bg-white mr-4 rounded-3xl"
+    >
       <ng-content></ng-content>
     </div>
+
+    <div
+      *ngIf="isCheckingAuth()"
+      class="flex-1 h-[calc(100vh-4rem)] w-full p-6 mr-4 rounded-3xl"
+    ></div>
   </div>
 </div>

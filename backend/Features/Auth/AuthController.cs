@@ -111,10 +111,12 @@ namespace backend.Features.Auth
       var cookieOptions = new CookieOptions
       {
         HttpOnly = true,
-        Secure = Request.IsHttps,
-        SameSite = SameSiteMode.Lax,
+        // Cross-site cookie required for localhost frontend calling tareapoo.xyz API.
+        Secure = true,
+        SameSite = SameSiteMode.None,
         Expires = DateTimeOffset.UtcNow.AddMinutes(expirationMinutes),
-        Path = "/"
+        Path = "/",
+        IsEssential = true,
       };
 
       Response.Cookies.Append(SessionConstants.AuthCookieName, token, cookieOptions);
