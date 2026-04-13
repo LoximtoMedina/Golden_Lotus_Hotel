@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { components } from '../../../../types/api';
+import { DatePipe } from '@angular/common'
 
 type reservation = components['schemas']['Reservation'];
 type Client = components['schemas']['Client'];
@@ -7,7 +8,7 @@ type PopulatedReservation = reservation & { client: Client };
 
 @Component({
   selector: 'app-reservations-table',
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './table.html',
   styleUrl: './table.css',
 })

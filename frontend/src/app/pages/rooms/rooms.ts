@@ -19,14 +19,14 @@ import { Switch } from '../../components/switch/switch';
 @Component({
   selector: 'app-rooms',
   imports: [
-      CommonModule,
-      FormsModule,
-      AuthenticatedLayout,
-      RoomsTable,
-      SearchBar,
-      Switch,
-      Pagination,
-    ],
+    CommonModule,
+    FormsModule,
+    AuthenticatedLayout,
+    RoomsTable,
+    SearchBar,
+    Switch,
+    Pagination,
+  ],
   templateUrl: './rooms.html',
   styleUrls: ['./rooms.css'],
 })
@@ -50,69 +50,69 @@ export class Rooms implements OnInit {
   }
 
   // Función para construir los parámetros de la API a partir del estado actual
-    private buildParams(page: number, count: number): ListRoomsParams {
-      const searchQuery = this.searchQuery().trim();
-  
-      return {
-        page,
-        count,
-        includeDeleted: this.showDeleted(),
-        sort: {
-          order: 'desc',
-        },
-        ...(searchQuery
-          ? {
-              search: {
-                query: searchQuery,
-                searchIn: ['description'],
-              },
-            }
-          : {}),
-      };
+  private buildParams(page: number, count: number): ListRoomsParams {
+    const searchQuery = this.searchQuery().trim();
+
+    return {
+      page,
+      count,
+      includeDeleted: this.showDeleted(),
+      sort: {
+        order: 'desc',
+      },
+      ...(searchQuery
+        ? {
+            search: {
+              query: searchQuery,
+              searchIn: ['description'],
+            },
+          }
+        : {}),
+    };
+  }
+
+  // Función para cargar la página actual con los parámetros actuales
+  private async loadPage(page = this.page(), count = this.count()): Promise<void> {
+    await this.list(this.buildParams(page, count));
+  }
+
+  // Función para listar clientes con manejo de estado
+  async list(params: ListRoomsParams): Promise<void> {
+    this.page.set(params.page);
+    this.count.set(params.count);
+    this.loading.set(true);
+    this.error.set('');
+
+    // Llamada a la API para obtener la lista de clientes
+    try {
+      const response = await roomsApi.list(params);
+      const rows = response.data ?? [];
+      this.rooms.set(rows);
+      this.total.set(response.total ?? rows.length);
+    } catch (error) {
+      console.log(error);
+      this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
+    } finally {
+      this.loading.set(false);
     }
-  
-    // Función para cargar la página actual con los parámetros actuales
-    private async loadPage(page = this.page(), count = this.count()): Promise<void> {
-      await this.list(this.buildParams(page, count));
-    }
-  
-    // Función para listar clientes con manejo de estado
-      async list(params: ListRoomsParams): Promise<void> {
-        this.page.set(params.page);
-        this.count.set(params.count);
-        this.loading.set(true);
-        this.error.set('');
-    
-        // Llamada a la API para obtener la lista de clientes
-        try {
-          const response = await roomsApi.list(params);
-          const rows = response.data ?? [];
-          this.rooms.set(rows);
-          this.total.set(response.total ?? rows.length);
-        } catch (error) {
-          console.log(error);
-          this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
-        } finally {
-          this.loading.set(false);
-        }
-      }
-  
-     // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
-    async handleSearch(query: string): Promise<void> {
-      this.searchQuery.set(query);
-      await this.loadPage(0, this.count());
-    }
-  
-    // Maneja el cambio en el switch de mostrar eliminados
-    async handleShowDeletedChange(show: boolean): Promise<void> {
-      this.showDeleted.set(show);
-      await this.loadPage(0, this.count());
-    }
-  
-    // Maneja el cambio de página y tamaño de página en la paginación
-    async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
-      await this.loadPage(page, pageSize);
-    }
+  }
+
+  // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
+  async handleSearch(query: string): Promise<void> {
+    this.searchQuery.set(query);
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio en el switch de mostrar eliminados
+  async handleShowDeletedChange(show: boolean): Promise<void> {
+    this.showDeleted.set(show);
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio de página y tamaño de página en la paginación
+  async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+    await this.loadPage(page, pageSize);
+  }
 
   // MODALS
   // 1. Variables de control para los Modals
@@ -138,18 +138,30 @@ export class Rooms implements OnInit {
       phone: '',
       active: true,
       creationDate: new Date().toISOString(),
-  };
+    };
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  async openEditModal(reservation: any) {
+    const result = await roomsApi.get({ roomIds: [reservation] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.isEditing = true;
-    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  async openDeleteModal(room: any) {
+    const result = await roomsApi.get({ roomIds: [room] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.showDeleteModal = true;
   }
 
