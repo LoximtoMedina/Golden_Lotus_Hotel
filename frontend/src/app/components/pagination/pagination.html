@@ -78,13 +78,14 @@
     <div class="relative">
       <select
         class="appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2 pr-10 text-sm font-semibold text-gray-700 shadow-sm transition focus:border-blue-500 focus:outline-none"
-        [value]="pageSize"
+        [(ngModel)]="pageSize"
         (change)="onPageSizeChange($event)"
         aria-label="Tamaño de página"
       >
         @for (size of pageSizeOptions; track size) {
           <option [value]="size">{{ size }} / página</option>
         }
+
       </select>
 
       <div

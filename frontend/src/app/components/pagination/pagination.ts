@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 export interface PageChangeEvent {
   page: number;
@@ -7,7 +8,8 @@ export interface PageChangeEvent {
 
 @Component({
   selector: 'app-pagination',
-  imports: [],
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: './pagination.html',
   styleUrl: './pagination.css',
 })
