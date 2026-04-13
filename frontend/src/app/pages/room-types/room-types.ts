@@ -2,15 +2,14 @@
 import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
-import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
-
-import roomTypesApi from '../../features/room-types/api';
+import { roomTypesApi } from '../../features/room-types/api'; // API para tipos de habitación
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
+import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
+import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
+// Tipos para tipos de habitación y parámetros de listado
 type RoomType = components['schemas']['RoomType'];
 type ListRoomTypesParams = Parameters<typeof roomTypesApi.list>[0];
-
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Components
 import { Table as RoomTypesTable } from '../../features/room-types/components/table/table';
@@ -19,10 +18,20 @@ import { Switch } from '../../components/switch/switch';
 
 @Component({
   selector: 'app-room-types',
-  imports: [CommonModule, FormsModule, RoomTypesTable, AuthenticatedLayout, SearchBar, Switch],
+  imports: [
+      CommonModule,
+      FormsModule,
+      AuthenticatedLayout,
+      RoomTypesTable,
+      SearchBar,
+      Switch,
+      Pagination,
+    ],
   templateUrl: './room-types.html',
   styleUrls: ['./room-types.css'],
 })
+
+// Componente principal para la gestión de tipos de habitación
 export class RoomTypes implements OnInit {
   // Estado del componente utilizando señales
   roomTypes = signal<RoomType[]>([]);
@@ -32,17 +41,39 @@ export class RoomTypes implements OnInit {
   page = signal(0);
   count = signal(20);
   showDeleted = signal(false);
+  searchQuery = signal('');
+  pageSizeOptions = [10, 20, 50, 100];
 
   // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
-    await this.list({
-      page: this.page(),
-      count: this.count(),
+    await this.loadPage();
+  }
+
+  // Función para construir los parámetros de la API a partir del estado actual
+  private buildParams(page: number, count: number): ListRoomTypesParams {
+    const searchQuery = this.searchQuery().trim();
+
+    return {
+      page,
+      count,
       includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
-    });
+      ...(searchQuery
+        ? {
+            search: {
+              query: searchQuery,
+              searchIn: ['description'],
+            },
+          }
+        : {}),
+    };
+  }
+
+  // Función para cargar la página actual con los parámetros actuales
+  private async loadPage(page = this.page(), count = this.count()): Promise<void> {
+    await this.list(this.buildParams(page, count));
   }
 
   // Función para listar clientes con manejo de estado
@@ -53,55 +84,34 @@ export class RoomTypes implements OnInit {
     this.error.set('');
 
     // Llamada a la API para obtener la lista de clientes
-    try {
-      const response = await roomTypesApi.list(params);
+        try {
+          const response = await roomTypesApi.list(params);
+          const rows = response.data ?? [];
+          this.roomTypes.set(rows);
+          this.total.set(response.total ?? rows.length);
+        } catch (error) {
+          console.log(error);
+          this.error.set(error instanceof Error ? error.message : 'Failed to load room types');
+        } finally {
+          this.loading.set(false);
+        }
+      }
 
-      const rows = response.data ?? [];
-      this.roomTypes.set(rows);
-      this.total.set(response.total ?? rows.length);
-    } catch (error) {
-      console.log(error);
-      this.error.set(error instanceof Error ? error.message : 'Failed to load room types');
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
+   // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
   async handleSearch(query: string): Promise<void> {
-    if (!query) {
-      return this.list({
-        page: 0,
-        count: this.count(),
-        includeDeleted: this.showDeleted(),
-        sort: {
-          order: 'desc',
-        },
-      });
-    }
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: this.showDeleted(),
-      sort: {
-        order: 'desc',
-      },
-      search: {
-        query: query,
-        searchIn: ['description'],
-      },
-    });
+    this.searchQuery.set(query);
+    await this.loadPage(0, this.count());
   }
 
+  // Maneja el cambio en el switch de mostrar eliminados
   async handleShowDeletedChange(show: boolean): Promise<void> {
     this.showDeleted.set(show);
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: show,
-      sort: {
-        order: 'desc',
-      },
-    });
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio de página y tamaño de página en la paginación
+  async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+    await this.loadPage(page, pageSize);
   }
 
   // MODALS

@@ -2,14 +2,13 @@
 import { Component, OnInit, signal } from '@angular/core'; // Componentes y señales de Angular
 import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
-
 import { roomsApi } from '../../features/rooms/api'; // API para empleados
-import { components } from '../../types/api';
+import type { components } from '../../types/api'; // Tipos generados a partir de la API
+import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
+import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 type Room = components['schemas']['Room'];
 type ListRoomsParams = Parameters<typeof roomsApi.list>[0];
-
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Components
 import { Table as RoomsTable } from '../../features/rooms/components/table/table';
@@ -18,10 +17,20 @@ import { Switch } from '../../components/switch/switch';
 
 @Component({
   selector: 'app-rooms',
-  imports: [CommonModule, FormsModule, RoomsTable, SearchBar, AuthenticatedLayout, Switch],
+  imports: [
+        CommonModule,
+        FormsModule,
+        AuthenticatedLayout,
+        RoomsTable,
+        SearchBar,
+        Switch,
+        Pagination,
+      ],
   templateUrl: './rooms.html',
   styleUrls: ['./rooms.css'],
 })
+
+// Componente principal para la gestión de habitaciones
 export class Rooms implements OnInit {
   // Estado del componente utilizando señales
   rooms = signal<Room[]>([]);
@@ -31,18 +40,78 @@ export class Rooms implements OnInit {
   page = signal(0);
   count = signal(20);
   showDeleted = signal(false);
+  searchQuery = signal('');
+  pageSizeOptions = [10, 20, 50, 100];
 
-  // Inicialización de la lista de habitaciones al cargar el componente
+  /// Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
-    await this.list({
-      page: this.page(),
-      count: this.count(),
-      includeDeleted: this.showDeleted(),
-      sort: {
-        order: 'desc',
-      },
-    });
+    await this.loadPage();
   }
+
+  // Función para construir los parámetros de la API a partir del estado actual
+    private buildParams(page: number, count: number): ListRoomsParams {
+      const searchQuery = this.searchQuery().trim();
+  
+      return {
+        page,
+        count,
+        includeDeleted: this.showDeleted(),
+        sort: {
+          order: 'desc',
+        },
+        ...(searchQuery
+          ? {
+              search: {
+                query: searchQuery,
+                searchIn: ['description'],
+              },
+            }
+          : {}),
+      };
+    }
+  
+    // Función para cargar la página actual con los parámetros actuales
+    private async loadPage(page = this.page(), count = this.count()): Promise<void> {
+      await this.list(this.buildParams(page, count));
+    }
+  
+    // Función para listar clientes con manejo de estado
+    async list(params: ListRoomsParams): Promise<void> {
+      this.page.set(params.page);
+      this.count.set(params.count);
+      this.loading.set(true);
+      this.error.set('');
+  
+      // Llamada a la API para obtener la lista de clientes
+          try {
+            const response = await roomsApi.list(params);
+            const rows = response.data ?? [];
+            this.rooms.set(rows);
+            this.total.set(response.total ?? rows.length);
+          } catch (error) {
+            console.log(error);
+            this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
+          } finally {
+            this.loading.set(false);
+          }
+        }
+  
+     // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
+    async handleSearch(query: string): Promise<void> {
+      this.searchQuery.set(query);
+      await this.loadPage(0, this.count());
+    }
+  
+    // Maneja el cambio en el switch de mostrar eliminados
+    async handleShowDeletedChange(show: boolean): Promise<void> {
+      this.showDeleted.set(show);
+      await this.loadPage(0, this.count());
+    }
+  
+    // Maneja el cambio de página y tamaño de página en la paginación
+    async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+      await this.loadPage(page, pageSize);
+    }
 
   // MODALS
   // 1. Variables de control para los Modals
@@ -57,67 +126,6 @@ export class Rooms implements OnInit {
     name: '',
     status: 'active',
   };
-
-  // Función para listar clientes con manejo de estado
-  async list(params: ListRoomsParams): Promise<void> {
-    this.page.set(params.page);
-    this.count.set(params.count);
-    this.loading.set(true);
-    this.error.set('');
-
-    // Llamada a la API para obtener la lista de clientes
-    try {
-      const response = await roomsApi.list(params);
-
-      console.log(response);
-
-      const rows = response.data ?? [];
-      this.rooms.set(rows);
-      this.total.set(response.total ?? rows.length);
-    } catch (error) {
-      console.log(error);
-      this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  async handleSearch(query: string): Promise<void> {
-    if (!query) {
-      return this.list({
-        page: 0,
-        count: this.count(),
-        includeDeleted: this.showDeleted(),
-        sort: {
-          order: 'desc',
-        },
-      });
-    }
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: this.showDeleted(),
-      sort: {
-        order: 'desc',
-      },
-      search: {
-        query: query,
-        searchIn: ['number', 'description'],
-      },
-    });
-  }
-
-  async handleShowDeletedChange(show: boolean): Promise<void> {
-    this.showDeleted.set(show);
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: show,
-      sort: {
-        order: 'desc',
-      },
-    });
-  }
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {

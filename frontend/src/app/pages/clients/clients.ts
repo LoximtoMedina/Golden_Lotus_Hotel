@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { clientsApi } from '../../features/clients/api'; // API para clientes
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
-
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Tipos para clientes y parámetros de listado

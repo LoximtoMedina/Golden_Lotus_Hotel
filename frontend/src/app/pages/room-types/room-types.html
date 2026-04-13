@@ -23,16 +23,24 @@
     (onSearch)="handleSearch($event)"
   ></app-search-bar>
 
-  <!-- Rooms Table -->
+  <!-- Room Type Table -->
   <app-room-types-table [records]="roomTypes()" />
 
-  <app-switch
-    [label]="'Mostrar Registros Eliminados'"
-    (checkedChange)="handleShowDeletedChange($event)"
-  ></app-switch>
-</app-authenticated-layout>
+  <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
+    <app-switch
+      [label]="'Mostrar Registros Eliminados'"
+      (checkedChange)="handleShowDeletedChange($event)"
+    ></app-switch>
 
-<!-- Room type Table -->
+    <app-pagination
+      [currentPage]="page()"
+      [totalRecords]="total()"
+      [pageSize]="count()"
+      [pageSizeOptions]="pageSizeOptions"
+      (change)="handlePaginationChange($event)"
+    ></app-pagination>
+  </div>
+</app-authenticated-layout>
 
 <!-- Adding/Editing Modal-->
 <div
