@@ -59,6 +59,33 @@ export class reservations implements OnInit {
     });
   }
 
+  // Función para construir los parámetros de la API a partir del estado actual
+  private buildParams(page: number, count: number): ListreservationsParams {
+    const searchQuery = this.searchQuery().trim();
+
+    return {
+      page,
+      count,
+      includeDeleted: this.showDeleted(),
+      sort: {
+        order: 'desc',
+      },
+      ...(searchQuery
+        ? {
+            search: {
+              query: searchQuery,
+              searchIn: ['status'],
+            },
+          }
+        : {}),
+    };
+  }
+
+  // Función para cargar la página actual con los parámetros actuales
+  private async loadPage(page = this.page(), count = this.count()): Promise<void> {
+    await this.list(this.buildParams(page, count));
+  }
+
   // Función para listar clientes con manejo de estado
   async list(params: ListreservationsParams): Promise<void> {
     this.page.set(params.page);
@@ -81,41 +108,21 @@ export class reservations implements OnInit {
     }
   }
 
+  // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
   async handleSearch(query: string): Promise<void> {
-    if (!query) {
-      return this.list({
-        page: 0,
-        count: this.count(),
-        includeDeleted: this.showDeleted(),
-        sort: {
-          order: 'desc',
-        },
-      });
-    }
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: this.showDeleted(),
-      sort: {
-        order: 'desc',
-      },
-      search: {
-        query: query,
-        searchIn: ['status'],
-      },
-    });
+    this.searchQuery.set(query);
+    await this.loadPage(0, this.count());
   }
 
+  // Maneja el cambio en el switch de mostrar eliminados
   async handleShowDeletedChange(show: boolean): Promise<void> {
     this.showDeleted.set(show);
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: show,
-      sort: {
-        order: 'desc',
-      },
-    });
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio de página y tamaño de página en la paginación
+  async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+    await this.loadPage(page, pageSize);
   }
 
   // MODALS

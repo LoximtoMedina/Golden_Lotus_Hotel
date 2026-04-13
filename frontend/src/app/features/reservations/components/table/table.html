@@ -6,13 +6,10 @@
         <tr>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ID</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Room</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">
-            Check in Date
-          </th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">
-            Check out Date
-          </th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Room ID</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Check in Date</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Check out Date</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Charge</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ACTIONS</th>
         </tr>
@@ -21,23 +18,13 @@
       <tbody class="divide-y divide-slate-300">
         @for (reservation of records; track reservation.id) {
           <tr class="hover:bg-blue-50/30 transition-colors">
-            <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">
-              {{ reservation.id }}
-            </td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">
-              {{ reservation.client.name }}
-            </td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">{{ reservation.id }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.client.name }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.roomId }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">
-              {{ reservation.checkInDate }}
-            </td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-700">
-              {{ reservation.checkOutDate }}
-            </td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
-              {{ reservation.charge }}
-            </td>
-
+            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.status }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkInDate }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.checkOutDate }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">{{ reservation.charge }}</td>
             <td class="flex items-center justify-center space-x-2 px-6 py-4">
               <button
                 class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
