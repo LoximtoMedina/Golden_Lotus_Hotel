@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { employeesApi } from '../../features/employees/api'; // API para empleados
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
+import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
 
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
@@ -19,7 +20,15 @@ import { Switch } from '../../components/switch/switch';
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-employees',
-  imports: [CommonModule, FormsModule, AuthenticatedLayout, EmployeesTable, SearchBar, Switch],
+  imports: [
+      CommonModule,
+      FormsModule,
+      AuthenticatedLayout,
+      EmployeesTable,
+      SearchBar,
+      Switch,
+      Pagination,
+    ],
   templateUrl: './employees.html',
   styleUrls: ['./employees.css'],
 })
@@ -34,17 +43,39 @@ export class Employees implements OnInit {
   page = signal(0);
   count = signal(20);
   showDeleted = signal(false);
+  searchQuery = signal('');
+  pageSizeOptions = [10, 20, 50, 100];
 
-  // Inicialización de la lista de clientes al cargar el componente
+  // Inicialización de la lista de empleados al cargar el componente
   async ngOnInit(): Promise<void> {
-    await this.list({
-      page: this.page(),
-      count: this.count(),
+    await this.loadPage();
+  }
+
+  // Función para construir los parámetros de la API a partir del estado actual
+  private buildParams(page: number, count: number): ListEmployeesParams {
+    const searchQuery = this.searchQuery().trim();
+
+    return {
+      page,
+      count,
       includeDeleted: this.showDeleted(),
       sort: {
         order: 'desc',
       },
-    });
+      ...(searchQuery
+        ? {
+            search: {
+              query: searchQuery,
+              searchIn: ['name', 'identityNumber', 'phone'],
+            },
+          }
+        : {}),
+    };
+  }
+
+  // Función para cargar la página actual con los parámetros actuales
+  private async loadPage(page = this.page(), count = this.count()): Promise<void> {
+    await this.list(this.buildParams(page, count));
   }
 
   // Función para listar clientes con manejo de estado
@@ -69,42 +100,59 @@ export class Employees implements OnInit {
     }
   }
 
-  async handleSearch(query: string): Promise<void> {
-    if (!query) {
-      return this.list({
-        page: 0,
-        count: this.count(),
-        includeDeleted: this.showDeleted(),
-        sort: {
-          order: 'desc',
-        },
-      });
-    }
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: this.showDeleted(),
-      sort: {
-        order: 'desc',
-      },
-      search: {
-        query: query,
-        searchIn: ['name', 'identityNumber', 'phone'],
-      },
-    });
-  }
+  // async handleSearch(query: string): Promise<void> {
+  //   if (!query) {
+  //     return this.list({
+  //       page: 0,
+  //       count: this.count(),
+  //       includeDeleted: this.showDeleted(),
+  //       sort: {
+  //         order: 'desc',
+  //       },
+  //     });
+  //   }
+  //   await this.list({
+  //     page: 0,
+  //     count: this.count(),
+  //     includeDeleted: this.showDeleted(),
+  //     sort: {
+  //       order: 'desc',
+  //     },
+  //     search: {
+  //       query: query,
+  //       searchIn: ['name', 'identityNumber', 'phone'],
+  //     },
+  //   });
+  // }
 
-  async handleShowDeletedChange(show: boolean): Promise<void> {
-    this.showDeleted.set(show);
-    await this.list({
-      page: 0,
-      count: this.count(),
-      includeDeleted: show,
-      sort: {
-        order: 'desc',
-      },
-    });
-  }
+  // async handleShowDeletedChange(show: boolean): Promise<void> {
+  //   this.showDeleted.set(show);
+  //   await this.list({
+  //     page: 0,
+  //     count: this.count(),
+  //     includeDeleted: show,
+  //     sort: {
+  //       order: 'desc',
+  //     },
+  //   });
+  // }
+
+  // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
+    async handleSearch(query: string): Promise<void> {
+      this.searchQuery.set(query);
+      await this.loadPage(0, this.count());
+    }
+  
+    // Maneja el cambio en el switch de mostrar eliminados
+    async handleShowDeletedChange(show: boolean): Promise<void> {
+      this.showDeleted.set(show);
+      await this.loadPage(0, this.count());
+    }
+  
+    // Maneja el cambio de página y tamaño de página en la paginación
+    async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+      await this.loadPage(page, pageSize);
+    }
 
   // MODALS
   // 1. Variables de control para los Modals

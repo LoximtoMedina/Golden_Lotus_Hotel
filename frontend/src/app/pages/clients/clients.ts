@@ -51,6 +51,7 @@ export class Clients implements OnInit {
     await this.loadPage();
   }
 
+  // Función para construir los parámetros de la API a partir del estado actual
   private buildParams(page: number, count: number): ListclientsParams {
     const searchQuery = this.searchQuery().trim();
 
@@ -72,6 +73,7 @@ export class Clients implements OnInit {
     };
   }
 
+  // Función para cargar la página actual con los parámetros actuales
   private async loadPage(page = this.page(), count = this.count()): Promise<void> {
     await this.list(this.buildParams(page, count));
   }
@@ -97,16 +99,19 @@ export class Clients implements OnInit {
     }
   }
 
+  // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
   async handleSearch(query: string): Promise<void> {
     this.searchQuery.set(query);
     await this.loadPage(0, this.count());
   }
 
+  // Maneja el cambio en el switch de mostrar eliminados
   async handleShowDeletedChange(show: boolean): Promise<void> {
     this.showDeleted.set(show);
     await this.loadPage(0, this.count());
   }
 
+  // Maneja el cambio de página y tamaño de página en la paginación
   async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
     await this.loadPage(page, pageSize);
   }
