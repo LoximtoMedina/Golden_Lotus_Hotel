@@ -5,11 +5,13 @@
         <tr>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ID</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">DNI</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Name</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Phone</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Email</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Salary</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ACTIONS</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+          <!-- <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Acces key</th> -->
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ACtions</th>   
         </tr>
       </thead>
 
@@ -22,13 +24,19 @@
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">
               {{ employee.identityNumber }}
             </td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ employee.name }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ employee.phone }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-green-700 font-mono font-bold">
+              L. {{ employee.salary }}
+            </td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ employee.name }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
               {{ employee.email }}
             </td>
-            <td class="whitespace-nowrap px-6 py-4 text-green-700 font-mono font-bold">
-              L. {{ employee.salary }}
+            <!-- <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
+              {{ employee.accesKey }}
+            </td> -->
+            <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">
+              {{ employee.role }}
             </td>
 
             <td class="flex items-center justify-center space-x-2 px-6 py-4">
