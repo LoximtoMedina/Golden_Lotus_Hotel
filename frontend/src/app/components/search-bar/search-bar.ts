@@ -12,6 +12,7 @@ export class SearchBar {
   @Input() placeholder: string = '';
   @Input() textButton: string = '';
   @Output() onSearch = new EventEmitter<string>();
+  @Output() onButtonClick = new EventEmitter<void>();
 
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
@@ -19,5 +20,9 @@ export class SearchBar {
     } else {
       this.query.set((event.target as HTMLInputElement).value);
     }
+  }
+
+  handleButtonClick() {
+    this.onButtonClick.emit();
   }
 }

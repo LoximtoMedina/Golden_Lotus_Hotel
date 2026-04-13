@@ -21,7 +21,8 @@
   <app-search-bar 
    [placeholder]="'Buscar por descripción...'"
    [textButton]="'Nueva Habitación'"
-   (onSearch)="handleSearch($event)"> </app-search-bar>
+   (onSearch)="handleSearch($event)"
+   (onButtonClick)="openAddModal()"></app-search-bar>
 
   <!-- Rooms Table -->
   <app-rooms-table [records]="rooms()" />

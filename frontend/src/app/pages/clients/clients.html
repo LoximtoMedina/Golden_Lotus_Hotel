@@ -20,6 +20,7 @@
     [placeholder]="'Buscar clientes por nombre, DNI o teléfono...'"
     [textButton]="'Nuevo Cliente'"
     (onSearch)="handleSearch($event)"
+    (onButtonClick)="openAddModal()"
   ></app-search-bar>
 
   <app-clients-table [records]="clients()" />

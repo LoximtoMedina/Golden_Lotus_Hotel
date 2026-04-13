@@ -21,8 +21,9 @@
   <app-search-bar 
     [placeholder]="'Buscar por descripción...'" 
     (onSearch)="handleSearch($event)"
-    [textButton]="'Nuevo Tipo de Habitación'">
-  </app-search-bar>
+    [textButton]="'Nuevo Tipo de Habitación'"
+    (onButtonClick)="openAddModal()"
+    ></app-search-bar>
 
   <!-- Room Type Table -->
   <app-room-types-table [records]="roomTypes()" />

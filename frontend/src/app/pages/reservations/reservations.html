@@ -20,6 +20,7 @@
     [placeholder]="'Buscar por status...'"
     [textButton]="'Nueva Reservación'"
     (onSearch)="handleSearch($event)"
+    (onButtonClick)="openAddModal()"
   ></app-search-bar>
 
   <app-reservations-table [records]="reservations()" />
