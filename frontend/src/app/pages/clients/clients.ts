@@ -189,12 +189,14 @@ export class Clients implements OnInit {
       console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para guardar en el backend
     }
+
     this.closeModals();
   }
 
   deleteEntity() {
     console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
     // Aquí irá tu código para eliminar en el backend
+    
     this.closeModals();
   }
 }
