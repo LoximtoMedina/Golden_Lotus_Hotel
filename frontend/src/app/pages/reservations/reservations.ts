@@ -148,6 +148,10 @@ export class reservations implements OnInit {
     creationDate: new Date().toISOString(),
   };
 
+  formattedDateForReservationCheckInDate: string = new Date().toISOString().split('T')[0];
+  formattedDateForReservationCheckOutDate: string = new Date().toISOString().split('T')[0];
+  formattedDateForReservationCreationDate: string = new Date().toISOString().split('T')[0];
+
   // 3. Funciones para abrir/cerrar modals y preparar datos
   openAddModal() {
     this.isEditing = false;
@@ -170,9 +174,18 @@ export class reservations implements OnInit {
 
     // @ts-ignore
     if (result.status === 'Success') {
+      const reservationcheckInDate = result.data?.[0];
+      const reservationcheckOutDate = result.data?.[0];
+      const reservationcreationDate = result.data?.[0];
       this.currentData = { ...result.data?.[0] };
+      
+      this.formattedDateForReservationCheckInDate = reservationcheckInDate?.checkInDate ? reservationcheckInDate.checkInDate.split('T')[0] : '';
+      this.formattedDateForReservationCheckOutDate = reservationcheckOutDate?.checkOutDate ? reservationcheckOutDate.checkOutDate.split('T')[0] : '';
+      this.formattedDateForReservationCreationDate = reservationcreationDate?.creationDate ? reservationcreationDate.creationDate.split('T')[0] : '';
+
       this.isEditing = true;
       this.showFormModal = true;
+
 
       this.cdr.detectChanges();
     }
