@@ -10,7 +10,7 @@ export class SearchBar {
   query = signal('');
 
   @Input() placeholder: string = '';
-
+  @Input() textButton: string = '';
   @Output() onSearch = new EventEmitter<string>();
 
   handleKeyDown(event: KeyboardEvent): void {
