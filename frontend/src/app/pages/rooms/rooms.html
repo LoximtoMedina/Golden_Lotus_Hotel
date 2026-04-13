@@ -115,6 +115,27 @@
           placeholder="Ej. 1000"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
+
+      </div>
+
+      <div *ngIf="isEditing" class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Active</label>
+        <input
+          type="checkbox"
+          [checked]="currentData.active"
+          disabled
+          class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 cursor-not-allowed ml-1"
+        />
+      </div>
+
+      <div *ngIf="isEditing" class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">CreationDate</label>
+        <input
+          type="date"
+          [value]="currentData.creationDate"
+          disabled
+          class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
+        />
       </div>
 
       <div class="flex gap-3 pt-4">
