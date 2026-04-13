@@ -199,4 +199,9 @@ export class Clients implements OnInit {
     
     this.closeModals();
   }
+
+  RestoreEntity(client: any) {
+    console.log(`Restaurando ${this.EntityType} ID:`, client);
+    // Aquí irá tu código para restaurar en el backend
+  }
 }

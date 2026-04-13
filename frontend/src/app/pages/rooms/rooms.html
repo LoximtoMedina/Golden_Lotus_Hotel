@@ -25,7 +25,11 @@
    (onButtonClick)="openAddModal()"></app-search-bar>
 
   <!-- Rooms Table -->
-  <app-rooms-table [records]="rooms()" (onEditButtonClick)="openEditModal($event)" (onDeleteButtonClick)="openDeleteModal($event)"/>
+  <app-rooms-table 
+    [records]="rooms()" 
+    (onEditButtonClick)="openEditModal($event)" 
+    (onDeleteButtonClick)="openDeleteModal($event)" 
+    (onRestoreButtonClick)="RestoreEntity($event)"/>
 
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
     <app-switch
