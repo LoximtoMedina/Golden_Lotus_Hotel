@@ -13,6 +13,14 @@ export class Table {
   @Input() records: RoomType[] = [];
   @Input() totalRecords: number = 0;
 
-  @Output() onDelete = new EventEmitter<void>();
-  @Output() onEdit = new EventEmitter<void>();
+  @Output() onDeleteButtonClick = new EventEmitter<void>();
+  @Output() onEditButtonClick = new EventEmitter<void>();
+ 
+  handleEditButtonClick() {
+    this.onEditButtonClick.emit();
+  }
+  
+  handleDeleteButtonClick() {
+    this.onDeleteButtonClick.emit();
+  }
 }

@@ -33,9 +33,10 @@
 
             <td class="flex items-center justify-center space-x-2 px-6 py-4">
               <button
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
                 title="Editar Registro"
-              >
+                (click)="handleEditButtonClick()"
+                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
+                >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-5 w-5"
@@ -53,8 +54,9 @@
               </button>
 
               <button
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
                 title="Borrar Registro"
+                (click)="handleDeleteButtonClick()"
+                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
