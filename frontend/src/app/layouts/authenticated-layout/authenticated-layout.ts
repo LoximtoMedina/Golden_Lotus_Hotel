@@ -15,6 +15,8 @@ type ApiStatus = components['schemas']['Status'];
 })
 export class AuthenticatedLayout implements OnInit {
   isCheckingAuth = signal(true);
+  name = signal('Usuario');
+  role = signal('Admin user');
 
   constructor(private router: Router) {}
 
@@ -28,6 +30,11 @@ export class AuthenticatedLayout implements OnInit {
 
       if (this.isFetchSuccess(result)) {
         this.isCheckingAuth.set(false);
+        console.log(result);
+        //@ts-ignore
+        this.name.set(result.employee?.name ?? 'Usuario');
+        //@ts-ignore
+        this.role.set(result.employee?.role ?? 'Admin user');
         return;
       }
     } catch {

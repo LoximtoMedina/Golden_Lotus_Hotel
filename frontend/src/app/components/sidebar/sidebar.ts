@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -10,6 +10,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrls: ['./sidebar.css'],
 })
 export class Sidebar {
-  userName: string = 'Cristian Galeano';
-  userRole: string = 'Admin User';
+  @Input() name: string = '';
+  @Input() role: string = '';
 }

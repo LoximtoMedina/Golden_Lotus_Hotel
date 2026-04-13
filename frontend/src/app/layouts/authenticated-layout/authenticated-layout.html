@@ -1,6 +1,6 @@
 <div class="h-[100vh] flex items-center flex-col justify-space-between bg-gray-100">
   <div class="flex items-center justify-center flex-1 w-full">
-    <app-sidebar></app-sidebar>
+    <app-sidebar [name]="name()" [role]="role()"></app-sidebar>
 
     <div
       *ngIf="!isCheckingAuth()"
