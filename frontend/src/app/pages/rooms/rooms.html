@@ -129,10 +129,11 @@
       </div>
 
       <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">CreationDate</label>
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Creation Date</label>
         <input
           type="datetime-local"
-          [value]="currentData.creationDate"
+          [value]="currentData.creationDate?.slice(0, 16)"
+          (ngModelChange)="currentData.creationDate = $event"
           disabled
           class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
         />

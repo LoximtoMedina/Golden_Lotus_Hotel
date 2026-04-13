@@ -179,6 +179,7 @@ export class reservations implements OnInit {
     }
   }
 
+
   async openDeleteModal(reservation: any) {
     const result = await reservationsApi.get({ reservationIds: [reservation] });
 

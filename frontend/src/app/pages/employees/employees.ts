@@ -152,7 +152,7 @@ export class Employees implements OnInit {
       email: '',
       role: '',
       active: true,
-      creationDate: new Date().toISOString(),
+      creationDate: new Date(),
     };
     this.showFormModal = true;
   }

@@ -144,7 +144,7 @@ export class Clients implements OnInit {
       identityNumber: '',
       phone: '',
       active: true,
-      creationDate: new Date().toISOString(),
+      creationDate: new Date(),
     };
     this.showFormModal = true;
   }

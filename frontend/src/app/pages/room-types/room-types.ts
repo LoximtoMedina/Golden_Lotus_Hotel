@@ -16,7 +16,6 @@ type ListRoomTypesParams = Parameters<typeof roomTypesApi.list>[0];
 import { Table as RoomTypesTable } from '../../features/room-types/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';
-import { reservationsApi } from '../../features/reservations/api';
 
 @Component({
   selector: 'app-room-types',
@@ -144,13 +143,15 @@ export class RoomTypes implements OnInit {
       maxOcuppancy: 1,
       Price: 0,
       active: true,
-      creationDate: new Date().toISOString(),
+      creationDate: new Date(),
     };
     this.showFormModal = true;
   }
 
   async openEditModal(roomTypes: any) {
     const result = await roomTypesApi.get({ roomTypeIds: [roomTypes] });
+
+    console.log(result.data?.[0])
 
     // @ts-ignore
     if (result.status === 'Success') {
