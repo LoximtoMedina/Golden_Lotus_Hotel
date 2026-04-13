@@ -141,7 +141,7 @@ export class Rooms implements OnInit {
       description: '',
       state: 'Avaliable',
       active: true,
-      creationDate: new Date().toISOString(),
+      creationDate: new Date(),
     };
     this.showFormModal = true;
   }

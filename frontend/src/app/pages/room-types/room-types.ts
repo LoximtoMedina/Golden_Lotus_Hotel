@@ -132,7 +132,7 @@ export class RoomTypes implements OnInit {
     maxOcuppancy: 1,
     Price: 0,
     active: true,
-    creationDate: new Date().toISOString(),
+    creationDate: new Date(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos

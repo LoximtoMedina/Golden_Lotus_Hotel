@@ -132,7 +132,7 @@ export class Clients implements OnInit {
     identityNumber: '',
     phone: '',
     active: true,
-    creationDate: new Date().toISOString(),
+    creationDate: new Date(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos

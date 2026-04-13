@@ -156,11 +156,11 @@ export class reservations implements OnInit {
       clientId: null,
       roomId: null,
       status: 'Pending',
-      checkInDate: new Date().toISOString(),
-      checkOutDate: new Date().toISOString(),
+      checkInDate: new Date(),
+      checkOutDate: new Date(),
       charge: 0,
       active: true,
-      creationDate: new Date().toISOString(),
+      creationDate: new Date(),
     };
     this.showFormModal = true;
   }

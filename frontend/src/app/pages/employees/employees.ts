@@ -137,7 +137,7 @@ export class Employees implements OnInit {
     email: '',
     role: '',
     active: true,
-    creationDate: new Date().toISOString(),
+    creationDate: new Date(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
