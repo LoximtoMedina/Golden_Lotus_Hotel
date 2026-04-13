@@ -9,7 +9,6 @@
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Salary</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Name</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-          <!-- <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Acces key</th> -->
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Role</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ACtions</th>   
         </tr>
@@ -32,9 +31,6 @@
             <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
               {{ employee.email }}
             </td>
-            <!-- <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
-              {{ employee.accesKey }}
-            </td> -->
             <td class="whitespace-nowrap px-6 py-4 text-gray-800 font-medium">
               {{ employee.role }}
             </td>
@@ -43,7 +39,7 @@
               <button
                 title="Editar Registro"
                 (click)="handleEditButtonClick(employee.id)"
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
+                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-slate-50 hover:scale-105 active:scale-95 group"
                 >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +60,7 @@
               <button
                 title="Borrar Registro"
                 (click)="handleDeleteButtonClick(employee.id)"
-                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-green-50 hover:scale-105 active:scale-95 group"
+                class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-slate-500 transition-all duration-300 hover:bg-red-50 hover:scale-105 active:scale-95 group"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
