@@ -143,14 +143,26 @@ export class Clients implements OnInit {
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  async openEditModal(client: any) {
+    const result = await clientsApi.get({clientIds: [client]})
+
+    // @ts-ignore
+    if (result.status ==="Success"){
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.isEditing = true;
-    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  async openDeleteModal(client: any) {
+    const result = await clientsApi.get({clientIds: [client]})
+
+    // @ts-ignore
+    if (result.status ==="Success"){
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.showDeleteModal = true;
   }
 
