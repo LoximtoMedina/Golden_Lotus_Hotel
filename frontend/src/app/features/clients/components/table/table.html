@@ -6,8 +6,8 @@
       <thead class="bg-gray-50/50 text-left">
         <tr>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase">ID</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase">DNI</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase">Name</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase">DNI</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase">Phone</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase">Actions</th>
         </tr>
@@ -18,8 +18,8 @@
         @for (client of records; track client.id) {
           <tr class="hover:bg-blue-50/30 transition-colors">
             <td class="px-6 py-4 text-gray-800 font-medium">{{ client.id }}</td>
-            <td class="px-6 py-4 text-gray-700">{{ client.identityNumber }}</td>
             <td class="px-6 py-4 text-gray-900">{{ client.name }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ client.identityNumber }}</td>
             <td class="px-6 py-4 text-gray-700">{{ client.phone }}</td>
             <td class="px-6 py-4 flex space-x-3">
               <!-- Edit Button -->
