@@ -100,6 +100,7 @@
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">Max occupancy</label>
         <input
           type="number"
+          min="1"
           [(ngModel)]="currentData.maxOccupancy"
           name="maxOccupancy"
           placeholder="Ej. 2"
