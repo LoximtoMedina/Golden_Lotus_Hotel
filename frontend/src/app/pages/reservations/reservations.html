@@ -121,8 +121,8 @@
       <div class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">CHECK IN DATE</label>
         <input
-          type="date"
-          [(ngModel)]="formattedDateForReservationCheckInDate"
+          type="datetime-local"
+          [(ngModel)]="currentData.creationDate"
           placeholder="dd/mm/yyyy"
           name="chekInDate"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
@@ -132,8 +132,8 @@
       <div class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">CHECK OUT DATE</label>
         <input
-          type="date"
-          [(ngModel)]="formattedDateForReservationCheckOutDate"
+          type="datetime-local"
+          [(ngModel)]="currentData.creationDate"
           placeholder="dd/mm/yyyy"
           name="checkOutDate"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
@@ -165,14 +165,13 @@
       <div *ngIf="isEditing" class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">CreationDate</label>
         <input
-          type="date"
-          [value]="formattedDateForReservationCreationDate"
+          type="datetime-local"
+          [(ngModel)]="currentData.creationDate"
           disabled
+          name="creationDate"
           class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
         />
       </div>
-
-      
 
       <div class="flex gap-3 pt-4">
         <button
