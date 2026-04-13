@@ -11,7 +11,7 @@ import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenti
 type client = components['schemas']['Client'];
 type ListclientsParams = Parameters<typeof clientsApi.list>[0];
 
-// Components for this page
+// Components
 import { Table as ClientsTable } from '../../features/clients/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';

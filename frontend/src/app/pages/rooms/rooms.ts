@@ -7,6 +7,7 @@ import type { components } from '../../types/api'; // Tipos generados a partir d
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
+// Tipos para clientes y parámetros de listado
 type Room = components['schemas']['Room'];
 type ListRoomsParams = Parameters<typeof roomsApi.list>[0];
 
@@ -18,14 +19,14 @@ import { Switch } from '../../components/switch/switch';
 @Component({
   selector: 'app-rooms',
   imports: [
-        CommonModule,
-        FormsModule,
-        AuthenticatedLayout,
-        RoomsTable,
-        SearchBar,
-        Switch,
-        Pagination,
-      ],
+      CommonModule,
+      FormsModule,
+      AuthenticatedLayout,
+      RoomsTable,
+      SearchBar,
+      Switch,
+      Pagination,
+    ],
   templateUrl: './rooms.html',
   styleUrls: ['./rooms.css'],
 })
@@ -76,25 +77,25 @@ export class Rooms implements OnInit {
     }
   
     // Función para listar clientes con manejo de estado
-    async list(params: ListRoomsParams): Promise<void> {
-      this.page.set(params.page);
-      this.count.set(params.count);
-      this.loading.set(true);
-      this.error.set('');
-  
-      // Llamada a la API para obtener la lista de clientes
-          try {
-            const response = await roomsApi.list(params);
-            const rows = response.data ?? [];
-            this.rooms.set(rows);
-            this.total.set(response.total ?? rows.length);
-          } catch (error) {
-            console.log(error);
-            this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
-          } finally {
-            this.loading.set(false);
-          }
+      async list(params: ListRoomsParams): Promise<void> {
+        this.page.set(params.page);
+        this.count.set(params.count);
+        this.loading.set(true);
+        this.error.set('');
+    
+        // Llamada a la API para obtener la lista de clientes
+        try {
+          const response = await roomsApi.list(params);
+          const rows = response.data ?? [];
+          this.rooms.set(rows);
+          this.total.set(response.total ?? rows.length);
+        } catch (error) {
+          console.log(error);
+          this.error.set(error instanceof Error ? error.message : 'Failed to load rooms');
+        } finally {
+          this.loading.set(false);
         }
+      }
   
      // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
     async handleSearch(query: string): Promise<void> {
@@ -137,7 +138,7 @@ export class Rooms implements OnInit {
       phone: '',
       active: true,
       creationDate: new Date().toISOString(),
-    };
+  };
     this.showFormModal = true;
   }
 

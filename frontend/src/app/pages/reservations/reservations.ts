@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common'; // Para *ngIf
 import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { reservationsApi } from '../../features/reservations/api'; // API para reservas
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
-import { SharedComponent } from '../../components/shared-layout/shared'; // Importa el componente compartido
+import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 
 // Tipos para reservas, clientes y parámetros de listado
@@ -21,7 +21,15 @@ import { Switch } from '../../components/switch/switch';
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-reservations',
-  imports: [CommonModule, FormsModule, AuthenticatedLayout, ReservationsTable, SearchBar, Switch],
+  imports: [
+          CommonModule,
+          FormsModule,
+          AuthenticatedLayout,
+          ReservationsTable,
+          SearchBar,
+          Switch,
+          Pagination,
+        ],
   templateUrl: './reservations.html',
   styleUrls: ['./reservations.css'],
 })
@@ -36,6 +44,8 @@ export class reservations implements OnInit {
   page = signal(0);
   count = signal(20);
   showDeleted = signal(false);
+  searchQuery = signal('');
+  pageSizeOptions = [10, 20, 50, 100];
 
   // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
