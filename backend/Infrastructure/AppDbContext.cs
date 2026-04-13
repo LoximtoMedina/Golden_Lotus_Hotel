@@ -42,6 +42,9 @@ namespace backend.Infrastructure
                 .Property(r => r.Charge)
                 .HasPrecision(18, 2);
 
+            modelBuilder.Entity<RoomType>()
+                .ToTable("RoomType");
+
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Client)
                 .WithMany()
