@@ -22,14 +22,14 @@ import { Switch } from '../../components/switch/switch';
 @Component({
   selector: 'app-reservations',
   imports: [
-          CommonModule,
-          FormsModule,
-          AuthenticatedLayout,
-          ReservationsTable,
-          SearchBar,
-          Switch,
-          Pagination,
-        ],
+    CommonModule,
+    FormsModule,
+    AuthenticatedLayout,
+    ReservationsTable,
+    SearchBar,
+    Switch,
+    Pagination,
+  ],
   templateUrl: './reservations.html',
   styleUrls: ['./reservations.css'],
 })
@@ -153,14 +153,26 @@ export class reservations implements OnInit {
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  async openEditModal(reservation: any) {
+    const result = await reservationsApi.get({ reservationIds: [reservation] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.isEditing = true;
-    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  async openDeleteModal(reservation: any) {
+    const result = await reservationsApi.get({ reservationIds: [reservation] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.showDeleteModal = true;
   }
 

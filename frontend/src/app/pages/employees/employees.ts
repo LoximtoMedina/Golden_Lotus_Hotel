@@ -21,14 +21,14 @@ import { Switch } from '../../components/switch/switch';
 @Component({
   selector: 'app-employees',
   imports: [
-      CommonModule,
-      FormsModule,
-      AuthenticatedLayout,
-      EmployeesTable,
-      SearchBar,
-      Switch,
-      Pagination,
-    ],
+    CommonModule,
+    FormsModule,
+    AuthenticatedLayout,
+    EmployeesTable,
+    SearchBar,
+    Switch,
+    Pagination,
+  ],
   templateUrl: './employees.html',
   styleUrls: ['./employees.css'],
 })
@@ -100,59 +100,22 @@ export class Employees implements OnInit {
     }
   }
 
-  // async handleSearch(query: string): Promise<void> {
-  //   if (!query) {
-  //     return this.list({
-  //       page: 0,
-  //       count: this.count(),
-  //       includeDeleted: this.showDeleted(),
-  //       sort: {
-  //         order: 'desc',
-  //       },
-  //     });
-  //   }
-  //   await this.list({
-  //     page: 0,
-  //     count: this.count(),
-  //     includeDeleted: this.showDeleted(),
-  //     sort: {
-  //       order: 'desc',
-  //     },
-  //     search: {
-  //       query: query,
-  //       searchIn: ['name', 'identityNumber', 'phone'],
-  //     },
-  //   });
-  // }
-
-  // async handleShowDeletedChange(show: boolean): Promise<void> {
-  //   this.showDeleted.set(show);
-  //   await this.list({
-  //     page: 0,
-  //     count: this.count(),
-  //     includeDeleted: show,
-  //     sort: {
-  //       order: 'desc',
-  //     },
-  //   });
-  // }
-
   // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
-    async handleSearch(query: string): Promise<void> {
-      this.searchQuery.set(query);
-      await this.loadPage(0, this.count());
-    }
-  
-    // Maneja el cambio en el switch de mostrar eliminados
-    async handleShowDeletedChange(show: boolean): Promise<void> {
-      this.showDeleted.set(show);
-      await this.loadPage(0, this.count());
-    }
-  
-    // Maneja el cambio de página y tamaño de página en la paginación
-    async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
-      await this.loadPage(page, pageSize);
-    }
+  async handleSearch(query: string): Promise<void> {
+    this.searchQuery.set(query);
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio en el switch de mostrar eliminados
+  async handleShowDeletedChange(show: boolean): Promise<void> {
+    this.showDeleted.set(show);
+    await this.loadPage(0, this.count());
+  }
+
+  // Maneja el cambio de página y tamaño de página en la paginación
+  async handlePaginationChange({ page, pageSize }: PageChangeEvent): Promise<void> {
+    await this.loadPage(page, pageSize);
+  }
 
   // MODALS
   // 1. Variables de control para los Modals
@@ -182,14 +145,26 @@ export class Employees implements OnInit {
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  async openEditModal(employee: any) {
+    const result = await employeesApi.get({ employeeIds: [employee] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.isEditing = true;
-    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  async openDeleteModal(employee: any) {
+    const result = await employeesApi.get({ employeeIds: [employee] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.showDeleteModal = true;
   }
 

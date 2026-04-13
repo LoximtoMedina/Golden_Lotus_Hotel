@@ -15,18 +15,19 @@ type ListRoomTypesParams = Parameters<typeof roomTypesApi.list>[0];
 import { Table as RoomTypesTable } from '../../features/room-types/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';
+import { reservationsApi } from '../../features/reservations/api';
 
 @Component({
   selector: 'app-room-types',
   imports: [
-      CommonModule,
-      FormsModule,
-      AuthenticatedLayout,
-      RoomTypesTable,
-      SearchBar,
-      Switch,
-      Pagination,
-    ],
+    CommonModule,
+    FormsModule,
+    AuthenticatedLayout,
+    RoomTypesTable,
+    SearchBar,
+    Switch,
+    Pagination,
+  ],
   templateUrl: './room-types.html',
   styleUrls: ['./room-types.css'],
 })
@@ -84,20 +85,20 @@ export class RoomTypes implements OnInit {
     this.error.set('');
 
     // Llamada a la API para obtener la lista de clientes
-        try {
-          const response = await roomTypesApi.list(params);
-          const rows = response.data ?? [];
-          this.roomTypes.set(rows);
-          this.total.set(response.total ?? rows.length);
-        } catch (error) {
-          console.log(error);
-          this.error.set(error instanceof Error ? error.message : 'Failed to load room types');
-        } finally {
-          this.loading.set(false);
-        }
-      }
+    try {
+      const response = await roomTypesApi.list(params);
+      const rows = response.data ?? [];
+      this.roomTypes.set(rows);
+      this.total.set(response.total ?? rows.length);
+    } catch (error) {
+      console.log(error);
+      this.error.set(error instanceof Error ? error.message : 'Failed to load room types');
+    } finally {
+      this.loading.set(false);
+    }
+  }
 
-   // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
+  // Funciones para manejar eventos de búsqueda, mostrar eliminados y paginación
   async handleSearch(query: string): Promise<void> {
     this.searchQuery.set(query);
     await this.loadPage(0, this.count());
@@ -142,14 +143,26 @@ export class RoomTypes implements OnInit {
     this.showFormModal = true;
   }
 
-  openEditModal(client: any) {
+  async openEditModal(roomTypes: any) {
+    const result = await roomTypesApi.get({ roomTypeIds: [roomTypes] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.isEditing = true;
-    this.currentData = { ...client };
     this.showFormModal = true;
   }
 
-  openDeleteModal(client: any) {
-    this.currentData = { ...client };
+  async openDeleteModal(roomTypes: any) {
+    const result = await roomTypesApi.get({ roomTypeIds: [roomTypes] });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.currentData = { ...result.data?.[0] };
+    }
+
     this.showDeleteModal = true;
   }
 
