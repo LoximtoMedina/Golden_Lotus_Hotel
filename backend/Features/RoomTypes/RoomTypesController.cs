@@ -26,7 +26,7 @@ namespace backend.Features.RoomTypes
         {
           Description = input.Description,
           MaxOccupancy = input.MaxOccupancy,
-          Price = (float)input.Price,
+          Price = (decimal)input.Price,
         };
 
         await _service.CreateAsync(roomType);
@@ -53,7 +53,7 @@ namespace backend.Features.RoomTypes
 
         if (!string.IsNullOrWhiteSpace(input.Description)) roomType.Description = input.Description;
         if (input.MaxOccupancy > 0) roomType.MaxOccupancy = input.MaxOccupancy;
-        if (input.Price > 0) roomType.Price = (float)input.Price;
+        if (input.Price > 0) roomType.Price = (decimal)input.Price;
         roomType.Active = input.Active;
 
         await _service.UpdateAsync(input.RoomTypeId, roomType);
@@ -184,7 +184,7 @@ namespace backend.Features.RoomTypes
         Id = entity.Id,
         Description = entity.Description,
         MaxOccupancy = entity.MaxOccupancy,
-        Price = entity.Price,
+        Price = (double)entity.Price,
         Active = entity.Active,
         CreationDate = new DateTimeOffset(entity.CreationDate),
       };

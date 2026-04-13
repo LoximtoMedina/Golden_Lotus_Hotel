@@ -43,6 +43,10 @@ namespace backend.Infrastructure
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<RoomType>()
+                .Property(rt => rt.Price)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<RoomType>()
                 .ToTable("RoomType");
 
             modelBuilder.Entity<Reservation>()
