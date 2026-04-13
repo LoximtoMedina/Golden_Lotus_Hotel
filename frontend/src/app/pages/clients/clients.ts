@@ -129,7 +129,10 @@ export class Clients implements OnInit {
   currentData: any = {
     id: null,
     name: '',
-    status: 'active',
+    identityNumber: '',
+    phone: '',
+    active: true,
+    creationDate: new Date().toISOString(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos

@@ -136,9 +136,10 @@ export class Rooms implements OnInit {
     this.isEditing = false;
     this.currentData = {
       id: null,
-      name: '',
-      identityNumber: '',
-      phone: '',
+      number: 0,
+      roomTypeId: null,
+      description: '',
+      state: 'Avaliable',
       active: true,
       creationDate: new Date().toISOString(),
     };

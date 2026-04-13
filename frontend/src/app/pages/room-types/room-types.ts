@@ -128,8 +128,11 @@ export class RoomTypes implements OnInit {
   // 2. Objeto para el formulario
   currentData: any = {
     id: null,
-    name: '',
-    status: 'active',
+    description: '',
+    maxOcuppancy: 1,
+    Price: 0,
+    active: true,
+    creationDate: new Date().toISOString(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
@@ -137,9 +140,9 @@ export class RoomTypes implements OnInit {
     this.isEditing = false;
     this.currentData = {
       id: null,
-      name: '',
-      identityNumber: '',
-      phone: '',
+      description: '',
+      maxOcuppancy: 1,
+      Price: 0,
       active: true,
       creationDate: new Date().toISOString(),
     };

@@ -16,6 +16,7 @@ type ListEmployeesParams = Parameters<typeof employeesApi.list>[0];
 import { Table as EmployeesTable } from '../../features/employees/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';
+import { email } from '@angular/forms/signals';
 
 // Componente principal para la gestión de empleados
 @Component({
@@ -129,8 +130,14 @@ export class Employees implements OnInit {
   // 2. Objeto para el formulario
   currentData: any = {
     id: null,
+    identityNumber: '',
+    phone: '',
+    salary: 12000,
     name: '',
-    status: 'active',
+    email: '',
+    role: '',
+    active: true,
+    creationDate: new Date().toISOString(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
@@ -138,9 +145,12 @@ export class Employees implements OnInit {
     this.isEditing = false;
     this.currentData = {
       id: null,
-      name: '',
       identityNumber: '',
       phone: '',
+      salary: 12000,
+      name: '',
+      email: '',
+      role: '',
       active: true,
       creationDate: new Date().toISOString(),
     };

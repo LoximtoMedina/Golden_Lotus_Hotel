@@ -138,8 +138,14 @@ export class reservations implements OnInit {
   // 2. Objeto para el formulario
   currentData: any = {
     id: null,
-    name: '',
-    status: 'active',
+    clientId: null,
+    roomId: null,
+    status: 'Pending',
+    checkInDate: new Date().toISOString(),
+    checkOutDate: new Date().toISOString(),
+    charge: 0,
+    active: true,
+    creationDate: new Date().toISOString(),
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
@@ -147,9 +153,12 @@ export class reservations implements OnInit {
     this.isEditing = false;
     this.currentData = {
       id: null,
-      name: '',
-      identityNumber: '',
-      phone: '',
+      clientId: null,
+      roomId: null,
+      status: 'Pending',
+      checkInDate: new Date().toISOString(),
+      checkOutDate: new Date().toISOString(),
+      charge: 0,
       active: true,
       creationDate: new Date().toISOString(),
     };
