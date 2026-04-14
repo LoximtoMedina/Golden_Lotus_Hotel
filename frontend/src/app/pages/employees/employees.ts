@@ -138,6 +138,7 @@ export class Employees implements OnInit {
     role: '',
     active: true,
     creationDate: new Date(),
+    accessKey: '',
   };
 
   // 3. Funciones para abrir/cerrar modals y preparar datos
@@ -196,17 +197,89 @@ export class Employees implements OnInit {
       console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
       // Aquí irá tu código para guardar en el backend
     }
-    this.closeModals();
   }
 
-  deleteEntity() {
-    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
-    // Aquí irá tu código para eliminar en el backend
-    this.closeModals();
+  async updateEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await employeesApi.update({
+      employeeId: this.currentData.id,
+      email: this.currentData.email,
+      identityNumber: this.currentData.identityNumber,
+      name: this.currentData.name,
+      phone: this.currentData.phone,
+      role: this.currentData.role,
+      salary: this.currentData.salary,
+      active: true,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Empleado actualizado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al actualizar el empleado');
+    }
   }
 
-  RestoreEntity(client: any) {
-    console.log(`Restaurando ${this.EntityType} ID:`, client);
-    // Aquí irá tu código para restaurar en el backend
+  async createEntity() {
+    console.log(`Creando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await employeesApi.create({
+      email: this.currentData.email,
+      identityNumber: this.currentData.identityNumber,
+      name: this.currentData.name,
+      phone: this.currentData.phone,
+      role: this.currentData.role,
+      salary: this.currentData.salary,
+      accessKey: this.currentData.accessKey,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Empleado creado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al crear el empleado');
+    }
+  }
+
+  async deleteEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await employeesApi.delete({
+      employeeId: this.currentData.id,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Empleado eliminado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al eliminar el empleado');
+    }
+  }
+
+  async RestoreEntity(employeeId: number) {
+    console.log(`Restaurando ${employeeId}`);
+
+    const result = await employeesApi.restore({
+      employeeId: employeeId,
+    });
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Empleado restaurado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al restaurar el empleado');
+    }
   }
 }

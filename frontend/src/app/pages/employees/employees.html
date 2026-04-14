@@ -14,7 +14,9 @@
       </svg>
       <h2 class="text-3xl font-bold tracking-tight">Empleados</h2>
     </div>
-    <p class="text-base text-slate-500 ml-16">Gestiona los empleados de <i>Golden Lotus Hotel</i></p>
+    <p class="text-base text-slate-500 ml-16">
+      Gestiona los empleados de <i>Golden Lotus Hotel</i>
+    </p>
   </div>
 
   <!-- Search Bar -->
@@ -26,7 +28,12 @@
   ></app-search-bar>
 
   <!-- Client Table -->
-  <app-employees-table [records]="employees()" (onEditButtonClick)="openEditModal($event)" (onDeleteButtonClick)="openDeleteModal($event) " (onRestoreButtonClick)="RestoreEntity($event)"/>
+  <app-employees-table
+    [records]="employees()"
+    (onEditButtonClick)="openEditModal($event)"
+    (onDeleteButtonClick)="openDeleteModal($event)"
+    (onRestoreButtonClick)="RestoreEntity($event)"
+  />
 
   <!-- Pagination and Filter Controls -->
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
@@ -43,7 +50,6 @@
       (change)="handlePaginationChange($event)"
     ></app-pagination>
   </div>
-
 </app-authenticated-layout>
 
 <!-- Adding/Editing Modal-->
@@ -91,8 +97,8 @@
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">DNI</label>
         <input
           type="text"
-          [(ngModel)]="currentData.dni"
-          name="name"
+          [(ngModel)]="currentData.identityNumber"
+          name="identityNumber"
           placeholder="Ej. 0301-2006-02367"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
@@ -143,15 +149,29 @@
         />
       </div>
 
-      <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Role</label>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Role</label>
+        <select
+          [(ngModel)]="currentData.role"
+          name="role"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 bg-white text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        >
+          <option value="" disabled>Selecciona un rol</option>
+          <option value="Manager">Manager</option>
+          <option value="Receptionist">Receptionist</option>
+          <option value="Housekeeper">Housekeeper</option>
+          <option value="Maintenance">Maintenance</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1" *ngIf="!isEditing">
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Access Key</label>
         <input
           type="text"
-          [value]="currentData.role"
-          disabled
-          name="role"
-          placeholder="Ej. Administrador, Lobby, Conserje..."
-          class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
+          [(ngModel)]="currentData.accessKey"
+          name="accessKey"
+          placeholder="Ej. 123456"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
 
@@ -186,6 +206,7 @@
         </button>
         <button
           type="submit"
+          (click)="isEditing ? updateEntity() : createEntity()"
           class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
         >
           {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}
@@ -225,7 +246,8 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Estás seguro?</h2>
     <p class="text-gray-500 mb-8 leading-relaxed">
       Estás a punto de eliminar a
-      <span class="font-bold text-gray-900">{{ currentData.name }}</span>.
+      <span class="font-bold text-gray-900">{{ currentData.name }}</span
+      >.
     </p>
 
     <div class="flex gap-3">
