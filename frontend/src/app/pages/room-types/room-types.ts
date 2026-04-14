@@ -151,7 +151,7 @@ export class RoomTypes implements OnInit {
   async openEditModal(roomTypes: any) {
     const result = await roomTypesApi.get({ roomTypeIds: [roomTypes] });
 
-    console.log(result.data?.[0])
+    console.log(result.data?.[0]);
 
     // @ts-ignore
     if (result.status === 'Success') {
@@ -182,25 +182,80 @@ export class RoomTypes implements OnInit {
 
   // Funciones de acción
 
-  saveEntity() {
-    if (this.isEditing) {
-      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para actualizar en el backend
+  async updateEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await roomTypesApi.update({
+      roomTypeId: this.currentData.id,
+      description: this.currentData.description,
+      maxOccupancy: this.currentData.maxOccupancy,
+      price: this.currentData.price,
+      active: true,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Tipo de habitación actualizado exitosamente');
+      await this.loadPage();
     } else {
-      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para guardar en el backend
+      console.log(result);
+      alert('Error al actualizar el tipo de habitación');
     }
-    this.closeModals();
   }
 
-  deleteEntity() {
-    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
-    // Aquí irá tu código para eliminar en el backend
-    this.closeModals();
+  async createEntity() {
+    console.log(`Creando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await roomTypesApi.create({
+      description: this.currentData.description,
+      maxOccupancy: this.currentData.maxOccupancy,
+      price: this.currentData.price,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Tipo de habitación creado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al crear el tipo de habitación');
+    }
   }
 
-  RestoreEntity(client: any) {
-    console.log(`Restaurando ${this.EntityType} ID:`, client);
-    // Aquí irá tu código para restaurar en el backend
+  async deleteEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await roomTypesApi.delete({
+      roomTypeId: this.currentData.id,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Tipo de habitación eliminado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al eliminar el tipo de habitación');
+    }
+  }
+
+  async RestoreEntity(roomTypeId: number) {
+    console.log(`Restaurando ${roomTypeId}`);
+
+    const result = await roomTypesApi.restore({
+      roomTypeId: roomTypeId,
+    });
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Tipo de habitación restaurado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al restaurar el tipo de habitación');
+    }
   }
 }
