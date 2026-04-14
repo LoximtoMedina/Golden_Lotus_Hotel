@@ -123,16 +123,6 @@
       </div>
 
       <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Active</label>
-        <input
-          type="checkbox"
-          [checked]="currentData.active"
-          disabled
-          class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 cursor-not-allowed ml-1"
-        />
-      </div>
-
-      <div *ngIf="isEditing" class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">Creation Date</label>
         <input
           type="datetime-local"
@@ -153,6 +143,7 @@
         </button>
         <button
           type="submit"
+          (click)="isEditing ? updateEntity() : createEntity()"
           class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
         >
           {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}

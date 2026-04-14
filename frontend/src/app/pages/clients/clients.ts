@@ -150,10 +150,10 @@ export class Clients implements OnInit {
   }
 
   async openEditModal(client: any) {
-    const result = await clientsApi.get({clientIds: [client]})
+    const result = await clientsApi.get({ clientIds: [client] });
 
     // @ts-ignore
-    if (result.status ==="Success"){
+    if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
       this.isEditing = true;
       this.showFormModal = true;
@@ -163,10 +163,10 @@ export class Clients implements OnInit {
   }
 
   async openDeleteModal(client: any) {
-    const result = await clientsApi.get({clientIds: [client]})
+    const result = await clientsApi.get({ clientIds: [client] });
 
     // @ts-ignore
-    if (result.status ==="Success"){
+    if (result.status === 'Success') {
       this.currentData = { ...result.data?.[0] };
       this.showDeleteModal = true;
 
@@ -180,28 +180,80 @@ export class Clients implements OnInit {
   }
 
   // Funciones de acción
+  async updateEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
 
-  saveEntity() {
-    if (this.isEditing) {
-      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para actualizar en el backend
+    const result = await clientsApi.update({
+      clientId: this.currentData.id,
+      identityNumber: this.currentData.identityNumber,
+      name: this.currentData.name,
+      phone: this.currentData.phone,
+      active: true,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Cliente actualizado exitosamente');
+      await this.loadPage();
     } else {
-      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para guardar en el backend
+      console.log(result);
+      alert('Error al actualizar el cliente');
     }
-
-    this.closeModals();
   }
 
-  deleteEntity() {
-    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
-    // Aquí irá tu código para eliminar en el backend
-    
-    this.closeModals();
+  async createEntity() {
+    console.log(`Creando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await clientsApi.create({
+      identityNumber: this.currentData.identityNumber,
+      name: this.currentData.name,
+      phone: this.currentData.phone,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Cliente creado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al crear el cliente');
+    }
   }
 
-  RestoreEntity(client: any) {
-    console.log(`Restaurando ${this.EntityType} ID:`, client);
-    // Aquí irá tu código para restaurar en el backend
+  async deleteEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await clientsApi.delete({
+      clientId: this.currentData.id,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Cliente eliminado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al eliminar el cliente');
+    }
+  }
+
+  async RestoreEntity(employeeId: number) {
+    console.log(`Restaurando ${employeeId}`);
+
+    const result = await clientsApi.restore({
+      clientId: employeeId,
+    });
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Cliente restaurado exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al restaurar el cliente');
+    }
   }
 }
