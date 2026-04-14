@@ -7,12 +7,26 @@ import type { components } from '../../types/api'; // Tipos generados a partir d
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
 import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 import { ChangeDetectorRef } from '@angular/core';
+import clientsApi from '../../features/clients/api';
+import { roomsApi } from '../../features/rooms/api';
 
 // Tipos para reservas, clientes y parámetros de listado
 type reservation = components['schemas']['Reservation'];
 type Client = components['schemas']['Client'];
-type PopulatedReservation = reservation & { client: Client };
+type Room = components['schemas']['Room'];
+type PopulatedReservation = reservation & { client: Client; room: Room };
 type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
+
+interface ClientList {
+  id: number;
+  name: string;
+}
+
+interface RoomList {
+  id: number;
+  number: string;
+  description: string;
+}
 
 // Components
 import { Table as ReservationsTable } from '../../features/reservations/components/table/table';
@@ -48,6 +62,9 @@ export class reservations implements OnInit {
   searchQuery = signal('');
   pageSizeOptions = [10, 20, 50, 100];
 
+  clients = signal<ClientList[]>([]);
+  rooms = signal<RoomList[]>([]);
+
   // Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
@@ -58,6 +75,26 @@ export class reservations implements OnInit {
         order: 'desc',
       },
     });
+
+    // Cargar clientes para el formulario
+    try {
+      const clientResponse = await clientsApi.list({ page: 0, count: 100 });
+      const clientRows = clientResponse.data ?? [];
+      this.clients.set(clientRows.map((c) => ({ id: c.id, name: c.name })));
+    } catch (error) {
+      console.log(error);
+    }
+
+    // Cargar habitaciones para el formulario
+    try {
+      const roomResponse = await roomsApi.list({ page: 0, count: 100 });
+      const roomRows = roomResponse.data ?? [];
+      this.rooms.set(
+        roomRows.map((r) => ({ id: r.id, number: r.number, description: r.description })),
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // Función para construir los parámetros de la API a partir del estado actual
@@ -179,7 +216,6 @@ export class reservations implements OnInit {
     }
   }
 
-
   async openDeleteModal(reservation: any) {
     const result = await reservationsApi.get({ reservationIds: [reservation] });
 
@@ -199,25 +235,86 @@ export class reservations implements OnInit {
 
   // Funciones de acción
 
-  saveEntity() {
-    if (this.isEditing) {
-      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para actualizar en el backend
+  async updateEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await reservationsApi.update({
+      reservationId: this.currentData.id,
+      clientId: this.currentData.clientId,
+      roomId: this.currentData.roomId,
+      status: this.currentData.status,
+      checkInDate: new Date(this.currentData.checkInDate).toISOString(),
+      checkOutDate: new Date(this.currentData.checkOutDate).toISOString(),
+      charge: this.currentData.charge,
+      active: true,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Reservación actualizada exitosamente');
+      await this.loadPage();
     } else {
-      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para guardar en el backend
+      console.log(result);
+      alert('Error al actualizar la reservación');
     }
-    this.closeModals();
   }
 
-  deleteEntity() {
+  async createEntity() {
+    console.log(`Creando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await reservationsApi.create({
+      clientId: this.currentData.clientId,
+      roomId: this.currentData.roomId,
+      status: this.currentData.status,
+      checkInDate: new Date(this.currentData.checkInDate).toISOString(),
+      checkOutDate: new Date(this.currentData.checkOutDate).toISOString(),
+      charge: this.currentData.charge,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Reservación creada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al crear la reservación');
+    }
+  }
+
+  async deleteEntity() {
     console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
-    // Aquí irá tu código para eliminar en el backend
-    this.closeModals();
+
+    const result = await reservationsApi.delete({
+      reservationId: this.currentData.id,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Reservación eliminada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al eliminar la reservación');
+    }
   }
 
-  RestoreEntity(client: any) {
-    console.log(`Restaurando ${this.EntityType} ID:`, client);
-    // Aquí irá tu código para restaurar en el backend
+  async RestoreEntity(reservationId: number) {
+    console.log(`Restaurando ${reservationId}`);
+
+    const result = await reservationsApi.restore({
+      reservationId: reservationId,
+    });
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Reservación restaurada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al restaurar la reservación');
+    }
   }
 }

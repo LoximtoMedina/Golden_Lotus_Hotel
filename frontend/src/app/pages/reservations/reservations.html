@@ -17,13 +17,18 @@
   </div>
 
   <app-search-bar
-    [placeholder]="'Buscar por status...'"
+    [placeholder]="'Buscar por estado...'"
     [textButton]="'Nueva Reservación'"
     (onSearch)="handleSearch($event)"
     (onButtonClick)="openAddModal()"
   ></app-search-bar>
 
-  <app-reservations-table [records]="reservations()" (onEditButtonClick)="openEditModal($event)" (onDeleteButtonClick)="openDeleteModal($event)" (onRestoreButtonClick)="RestoreEntity($event)"/>
+  <app-reservations-table
+    [records]="reservations()"
+    (onEditButtonClick)="openEditModal($event)"
+    (onDeleteButtonClick)="openDeleteModal($event)"
+    (onRestoreButtonClick)="RestoreEntity($event)"
+  />
 
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
     <app-switch
@@ -83,58 +88,65 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">CLIENT ID</label>
-        <input
-          type="number"
-          [(ngModel)]="currentData.clientId"
-          name="clienteId"
-          placeholder="Ej. 44"
-          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
-        />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">ROOM ID</label>
-        <input
-          type="number"
-          [(ngModel)]="currentData.roomId"
-          name="roomId"
-          placeholder="Ej. 12"
-          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
-        />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">STATUS</label>
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Cliente</label>
         <select
-        [(ngModel)]="currentData.status"
-        name="status" 
-        class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"> 
-          <option value="Pending" selected>Pending</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Canceled">Canceled</option>
-          <option value="CheckedIn">CheckedIn</option>
-          <option value="CheckedOut">CheckedOut</option>
+          [(ngModel)]="currentData.clientId"
+          name="clientId"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        >
+          <option [ngValue]="null" disabled>Selecciona un cliente</option>
+          <option *ngFor="let client of clients()" [ngValue]="client.id">
+            {{ client.name }}
+          </option>
         </select>
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">CHECK IN DATE</label>
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Habitación</label>
+        <select
+          [(ngModel)]="currentData.roomId"
+          name="roomId"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        >
+          <option [ngValue]="null" disabled>Selecciona una habitación</option>
+          <option *ngFor="let room of rooms()" [ngValue]="room.id">
+            Habitación {{ room.number }} - {{ room.description }}
+          </option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Estado</label>
+        <select
+          [(ngModel)]="currentData.status"
+          name="status"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        >
+          <option value="Pending" selected>Pendiente</option>
+          <option value="Confirmed">Confirmada</option>
+          <option value="Cancelled">Cancelada</option>
+          <option value="CheckedIn">Hospedado</option>
+          <option value="CheckedOut">CheckOut</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Fecha de Entrada</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.checkInDate?.slice(0, 16)" 
+          [ngModel]="currentData.checkInDate?.slice(0, 16)"
           (ngModelChange)="currentData.checkInDate = $event"
           placeholder="dd/mm/yyyy"
-          name="chekInDate"
+          name="checkInDate"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">CHECK OUT DATE</label>
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Fecha de Salida</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.checkOutDate?.slice(0, 16)" 
+          [ngModel]="currentData.checkOutDate?.slice(0, 16)"
           (ngModelChange)="currentData.checkOutDate = $event"
           placeholder="dd/mm/yyyy"
           name="checkOutDate"
@@ -143,19 +155,18 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">CHARGE</label>
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Cargo</label>
         <input
           type="number"
           [(ngModel)]="currentData.charge"
-          placeholder="Amount"
+          placeholder="Monto"
           name="charge"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
 
-
       <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Active</label>
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Activo</label>
         <input
           type="checkbox"
           [checked]="currentData.active"
@@ -165,10 +176,10 @@
       </div>
 
       <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">CreationDate</label>
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Fecha de Creación</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.creationDate?.slice(0, 16)" 
+          [ngModel]="currentData.creationDate?.slice(0, 16)"
           (ngModelChange)="currentData.creationDate = $event"
           disabled
           name="creationDate"
@@ -186,6 +197,7 @@
         </button>
         <button
           type="submit"
+          (click)="isEditing ? updateEntity() : createEntity()"
           class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
         >
           {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}
@@ -225,7 +237,8 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Estás seguro?</h2>
     <p class="text-gray-500 mb-8 leading-relaxed">
       Estás a punto de eliminar la reservación <br />
-      <span class="font-bold text-gray-900">N°{{ currentData.id }}</span>.
+      <span class="font-bold text-gray-900">N°{{ currentData.id }}</span
+      >.
     </p>
 
     <div class="flex gap-3">
@@ -242,7 +255,7 @@
         type="button"
         class="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95"
       >
-        Sí, eliminar
+        Sí, eliminarla
       </button>
     </div>
   </div>
