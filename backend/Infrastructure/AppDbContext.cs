@@ -58,6 +58,26 @@ namespace backend.Infrastructure
             modelBuilder.Entity<Reservation>()
                 .Navigation(r => r.Client)
                 .AutoInclude();
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Room)
+                .WithMany()
+                .HasForeignKey(r => r.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Reservation>()
+                .Navigation(r => r.Room)
+                .AutoInclude();
+
+            modelBuilder.Entity<Room>()
+                .HasOne(r => r.RoomType)
+                .WithMany()
+                .HasForeignKey(r => r.RoomTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Room>()
+                .Navigation(r => r.RoomType)
+                .AutoInclude();
         }
     }
 }

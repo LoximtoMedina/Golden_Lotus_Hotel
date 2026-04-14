@@ -1,5 +1,6 @@
 using backend.Contracts;
 using backend.Infrastructure;
+using backend.Features.Rooms;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -264,12 +265,41 @@ namespace backend.Features.Reservations
           CreationDate = new DateTimeOffset(entity.Client.CreationDate),
         },
         RoomId = entity.RoomId,
+        Room = entity.Room is null ? null : new backend.Contracts.Room
+        {
+          Id = entity.Room.Id,
+          Number = entity.Room.Number,
+          RoomTypeId = entity.Room.RoomTypeId,
+          Description = entity.Room.Description,
+          State = MapRoomState(entity.Room.State),
+          Active = entity.Room.Active,
+          CreationDate = new DateTimeOffset(entity.Room.CreationDate),
+          RoomType = entity.Room.RoomType is null ? null : new backend.Contracts.RoomType
+          {
+            Id = entity.Room.RoomType.Id,
+            Description = entity.Room.RoomType.Description,
+            MaxOccupancy = entity.Room.RoomType.MaxOccupancy,
+            Price = (double)entity.Room.RoomType.Price,
+            Active = entity.Room.RoomType.Active,
+            CreationDate = new DateTimeOffset(entity.Room.RoomType.CreationDate),
+          },
+        },
         Status = MapStatus(entity.Status),
         CheckInDate = new DateTimeOffset(entity.CheckInDate),
         CheckOutDate = new DateTimeOffset(entity.CheckOutDate),
         Charge = (double)entity.Charge,
         Active = entity.Active,
         CreationDate = new DateTimeOffset(entity.CreationDate),
+      };
+    }
+
+    private static RoomState MapRoomState(State state)
+    {
+      return state switch
+      {
+        State.Occupied => RoomState.Occupied,
+        State.Maintenance => RoomState.Maintenance,
+        _ => RoomState.Avaliable,
       };
     }
 
@@ -282,17 +312,17 @@ namespace backend.Features.Reservations
 
       return ex.InnerException is not null && IsNotFound(ex.InnerException);
     }
+  }
 
-    public class DeleteReservationInput
-    {
-      [JsonPropertyName("reservationId")]
-      public int ReservationId { get; set; }
-    }
+  public class DeleteReservationInput
+  {
+    [JsonPropertyName("reservationId")]
+    public int ReservationId { get; set; }
+  }
 
-    public class RestoreReservationInput
-    {
-      [JsonPropertyName("reservationId")]
-      public int ReservationId { get; set; }
-    }
+  public class RestoreReservationInput
+  {
+    [JsonPropertyName("reservationId")]
+    public int ReservationId { get; set; }
   }
 }

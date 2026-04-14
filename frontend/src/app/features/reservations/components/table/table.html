@@ -5,17 +5,19 @@
       <thead class="bg-gray-50/50 text-left">
         <tr>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Room ID</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Cliente</th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">
-            Check in Date
+            Número de Habitación
+          </th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Estatus</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">
+            Fecha de Check in
           </th>
           <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">
-            Check out Date
+            Fecha de Check out
           </th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Charge</th>
-          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">ACTIONS</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Costo</th>
+          <th class="px-6 py-4 font-semibold text-gray-600 uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>
 
@@ -33,7 +35,9 @@
               }
             </td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">{{ reservation.client.name }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.roomId }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-gray-900">
+              {{ reservation.room.number }}
+            </td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-900">{{ reservation.status }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-700">
               {{ reservation.checkInDate | date: 'dd/MM/yyyy | HH:mm' }}
@@ -42,7 +46,7 @@
               {{ reservation.checkOutDate | date: 'dd/MM/yyyy | HH:mm' }}
             </td>
             <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-mono text-xs">
-              {{ reservation.charge }}
+              L. {{ reservation.charge }}
             </td>
             <td class="flex items-center justify-center space-x-2 px-6 py-4">
               @if (reservation.active == true) {

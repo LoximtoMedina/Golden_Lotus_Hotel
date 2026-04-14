@@ -1,4 +1,6 @@
-﻿namespace backend.Features.Reservations
+﻿using backend.Features.Rooms;
+
+namespace backend.Features.Reservations
 {
     public class Reservation
     {
@@ -6,6 +8,7 @@
         public int ClientId { get; set; }
         public backend.Features.Clients.Client? Client { get; set; }
         public int RoomId { get; set; }
+        public Room? Room { get; set; }
         public ReservationStatus Status { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }

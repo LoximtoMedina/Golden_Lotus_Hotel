@@ -16,6 +16,13 @@ type ListRoomsParams = Parameters<typeof roomsApi.list>[0];
 import { Table as RoomsTable } from '../../features/rooms/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';
+import roomTypesApi from '../../features/room-types/api';
+
+// Room Types
+interface RoomTypeList {
+  id: number;
+  description: string;
+}
 
 @Component({
   selector: 'app-rooms',
@@ -45,9 +52,20 @@ export class Rooms implements OnInit {
   searchQuery = signal('');
   pageSizeOptions = [10, 20, 50, 100];
 
+  roomTypes = signal<RoomTypeList[]>([]);
+
   /// Inicialización de la lista de clientes al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.loadPage();
+
+    // Cargar tipos de habitación para el formulario
+    try {
+      const response = await roomTypesApi.list({ page: 0, count: 100 });
+      const rows = response.data ?? [];
+      this.roomTypes.set(rows.map((rt) => ({ id: rt.id, description: rt.description })));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // Función para construir los parámetros de la API a partir del estado actual
@@ -177,26 +195,81 @@ export class Rooms implements OnInit {
   }
 
   // Funciones de acción
+  async updateEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
 
-  saveEntity() {
-    if (this.isEditing) {
-      console.log(`Actualizando ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para actualizar en el backend
+    const result = await roomsApi.update({
+      roomId: this.currentData.id,
+      description: this.currentData.description,
+      number: this.currentData.number,
+      roomTypeId: this.currentData.roomTypeId,
+      active: true,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Habitación actualizado exitosamente');
+      await this.loadPage();
     } else {
-      console.log(`Guardando nuevo ${this.EntityType}:`, this.currentData);
-      // Aquí irá tu código para guardar en el backend
+      console.log(result);
+      alert('Error al actualizar la habitación');
     }
-    this.closeModals();
   }
 
-  deleteEntity() {
-    console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
-    // Aquí irá tu código para eliminar en el backend
-    this.closeModals();
+  async createEntity() {
+    console.log(`Creando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await roomsApi.create({
+      description: this.currentData.description,
+      number: this.currentData.number.toString(),
+      roomTypeId: this.currentData.roomTypeId,
+      state: 'Avaliable',
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Habitación creada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al crear la habitación');
+    }
   }
 
-  RestoreEntity(client: any) {
-    console.log(`Restaurando ${this.EntityType} ID:`, client);
-    // Aquí irá tu código para restaurar en el backend
+  async deleteEntity() {
+    console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
+
+    const result = await roomsApi.delete({
+      roomId: this.currentData.id,
+    });
+
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Habitación eliminada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al eliminar la habitación');
+    }
+  }
+
+  async RestoreEntity(roomId: number) {
+    console.log(`Restaurando ${roomId}`);
+
+    const result = await roomsApi.restore({
+      roomId: roomId,
+    });
+    // @ts-ignore
+    if (result.status === 'Success') {
+      this.closeModals();
+      alert('Habitación restaurada exitosamente');
+      await this.loadPage();
+    } else {
+      console.log(result);
+      alert('Error al restaurar la habitación');
+    }
   }
 }

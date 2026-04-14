@@ -1,4 +1,6 @@
-﻿namespace backend.Features.Rooms
+﻿using backend.Features.RoomTypes;
+
+namespace backend.Features.Rooms
 {
     public class Room
     {
@@ -9,5 +11,6 @@
         public State State { get; set; }
         public bool Active { get; set; }
         public DateTime CreationDate { get; set; }
+        public RoomType RoomType { get; set; }
     }
 }

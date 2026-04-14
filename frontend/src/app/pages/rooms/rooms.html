@@ -18,18 +18,20 @@
     </p>
   </div>
 
-  <app-search-bar 
-   [placeholder]="'Buscar por descripción...'"
-   [textButton]="'Nueva Habitación'"
-   (onSearch)="handleSearch($event)"
-   (onButtonClick)="openAddModal()"></app-search-bar>
+  <app-search-bar
+    [placeholder]="'Buscar por descripción...'"
+    [textButton]="'Nueva Habitación'"
+    (onSearch)="handleSearch($event)"
+    (onButtonClick)="openAddModal()"
+  ></app-search-bar>
 
   <!-- Rooms Table -->
-  <app-rooms-table 
-    [records]="rooms()" 
-    (onEditButtonClick)="openEditModal($event)" 
-    (onDeleteButtonClick)="openDeleteModal($event)" 
-    (onRestoreButtonClick)="RestoreEntity($event)"/>
+  <app-rooms-table
+    [records]="rooms()"
+    (onEditButtonClick)="openEditModal($event)"
+    (onDeleteButtonClick)="openDeleteModal($event)"
+    (onRestoreButtonClick)="RestoreEntity($event)"
+  />
 
   <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
     <app-switch
@@ -89,6 +91,15 @@
       </div>
 
       <div class="flex flex-col gap-1">
+        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Number</label>
+        <input
+          type="text"
+          [value]="currentData.number"
+          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">Description</label>
         <input
           type="text"
@@ -100,36 +111,17 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Max occupancy</label>
-        <input
-          type="number"
-          [(ngModel)]="currentData.maxOccupancy"
-          name="maxOccupancy"
-          placeholder="Ej. 2"
+        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Room Type</label>
+        <select
+          [(ngModel)]="currentData.roomTypeId"
+          name="roomTypeId"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
-        />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-700 uppercase ml-1">Price</label>
-        <input
-          type="text"
-          [(ngModel)]="currentData.Price"
-          name="price"
-          placeholder="Ej. 1000"
-          class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
-        />
-
-      </div>
-
-      <div *ngIf="isEditing" class="flex flex-col gap-1">
-        <label class="text-xs font-bold text-gray-400 uppercase ml-1">Active</label>
-        <input
-          type="checkbox"
-          [checked]="currentData.active"
-          disabled
-          class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 cursor-not-allowed ml-1"
-        />
+        >
+          <option [ngValue]="null" disabled>Selecciona un tipo de habitación</option>
+          <option *ngFor="let roomType of roomTypes()" [ngValue]="roomType.id">
+            {{ roomType.description }}
+          </option>
+        </select>
       </div>
 
       <div *ngIf="isEditing" class="flex flex-col gap-1">
@@ -153,6 +145,7 @@
         </button>
         <button
           type="submit"
+          (click)="isEditing ? updateEntity() : createEntity()"
           class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
         >
           {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}
@@ -192,7 +185,8 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-2">¿Estás seguro?</h2>
     <p class="text-gray-500 mb-8 leading-relaxed">
       Estás a punto de eliminar la habitación <br />
-      <span class="font-bold text-gray-900">N°{{ currentData.number }}</span>.
+      <span class="font-bold text-gray-900">N°{{ currentData.number }}</span
+      >.
     </p>
 
     <div class="flex gap-3">

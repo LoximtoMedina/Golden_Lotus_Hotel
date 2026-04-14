@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { components } from '../../../../types/api';
 
 type Room = components['schemas']['Room'];
+type RoomType = components['schemas']['RoomType'];
+type RoomWithType = Room & { roomType: RoomType };
 
 @Component({
   selector: 'app-rooms-table',
@@ -10,17 +12,17 @@ type Room = components['schemas']['Room'];
   styleUrl: './table.css',
 })
 export class Table {
-  @Input() records: Room[] = [];
+  @Input() records: RoomWithType[] = [];
   @Input() totalRecords: number = 0;
 
   @Output() onDeleteButtonClick = new EventEmitter<number>();
   @Output() onEditButtonClick = new EventEmitter<number>();
   @Output() onRestoreButtonClick = new EventEmitter<number>();
- 
+
   handleEditButtonClick(id: number) {
     this.onEditButtonClick.emit(id);
   }
-  
+
   handleDeleteButtonClick(id: number) {
     this.onDeleteButtonClick.emit(id);
   }

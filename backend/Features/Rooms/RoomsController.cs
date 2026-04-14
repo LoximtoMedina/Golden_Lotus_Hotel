@@ -244,6 +244,15 @@ namespace backend.Features.Rooms
         State = MapState(entity.State),
         Active = entity.Active,
         CreationDate = new DateTimeOffset(entity.CreationDate),
+        RoomType = entity.RoomType is null ? null : new backend.Contracts.RoomType
+        {
+          Id = entity.RoomType.Id,
+          Description = entity.RoomType.Description,
+          MaxOccupancy = entity.RoomType.MaxOccupancy,
+          Price = (double)entity.RoomType.Price,
+          Active = entity.RoomType.Active,
+          CreationDate = new DateTimeOffset(entity.RoomType.CreationDate),
+        },
       };
     }
 
