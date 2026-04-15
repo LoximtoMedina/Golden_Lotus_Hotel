@@ -31,53 +31,25 @@
         <h3 class="px-4 mb-4 text-lg font-bold text-black">Gestión</h3>
 
         <nav class="flex flex-col gap-2">
-          <a
-            routerLink="/employees"
-            routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
-            class="flex items-center px-15 w-full py-3 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Empleados
-          </a>
-
-          <a
-            routerLink="/clients"
-            routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
-            class="flex items-center w-full px-15 py-2 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Clientes
-          </a>
-
-          <a
-            routerLink="/reservations"
-            routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
-            class="flex items-center px-15 w-full py-3 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Reservaciones
-          </a>
-
-          <a
-            routerLink="/rooms"
-            routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
-            class="flex items-center px-15 w-full py-3 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Habitaciones
-          </a>
-
-          <a
-            routerLink="/rooms-types"
-            routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
-            class="flex items-center px-15 w-full py-3 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
-          >
-            Tipos de Habitación
-          </a>
+          @for (link of links; track link.path) {
+            <a
+              routerLink="{{ link.path }}"
+              routerLinkActive="bg-blue-600 text-white shadow-md hover:bg-blue-500 hover:text-white hover:scale-101"
+              class="flex gap-x-3 items-center px-15 w-full py-3 text-gray-400 font-semibold rounded-xl transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
+            >
+              <fa-icon [icon]="link.icon"></fa-icon>
+              {{ link.label }}
+            </a>
+          }  
         </nav>
       </div>
 
       <div class="mt-auto pt-6 border-t border-slate-700">
         <button
           (click)="logout()"
-          class="flex items-center w-full px-4 py-3 text-red-400 transition-colors duration-300 transform rounded-lg hover:bg-red-500 hover:text-white"
+          class="flex items-center w-full px-4 py-3 text-red-400 transition-colors duration-300 transform rounded-lg hover:bg-red-500 hover:text-white hover:cursor-pointer"
         >
+          <fa-icon [icon]="faSignOut"></fa-icon>
           <span class="mx-2 font-medium">Cerrar Sesión</span>
         </button>
       </div>

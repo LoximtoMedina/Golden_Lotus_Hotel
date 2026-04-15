@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import authApi from '../../features/auth/api';
 import type { components } from '../../types/api';
@@ -9,7 +9,7 @@ type ApiStatus = components['schemas']['Status'];
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [CommonModule, Sidebar],
+  imports: [CommonModule, Sidebar, RouterOutlet],
   templateUrl: './authenticated-layout.html',
   styleUrl: './authenticated-layout.css',
 })
