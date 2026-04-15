@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { reservationsApi } from '../../features/reservations/api'; // API para reservas
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 import { ChangeDetectorRef } from '@angular/core';
 import clientsApi from '../../features/clients/api';
 import { roomsApi } from '../../features/rooms/api';
@@ -39,7 +38,6 @@ import { Switch } from '../../components/switch/switch';
   imports: [
     CommonModule,
     FormsModule,
-    AuthenticatedLayout,
     ReservationsTable,
     SearchBar,
     Switch,

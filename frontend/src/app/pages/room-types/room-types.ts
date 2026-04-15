@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { roomTypesApi } from '../../features/room-types/api'; // API para tipos de habitación
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 import { ChangeDetectorRef } from '@angular/core';
 
 // Tipos para tipos de habitación y parámetros de listado
@@ -22,7 +21,6 @@ import { Switch } from '../../components/switch/switch';
   imports: [
     CommonModule,
     FormsModule,
-    AuthenticatedLayout,
     RoomTypesTable,
     SearchBar,
     Switch,

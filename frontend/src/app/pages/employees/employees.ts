@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms'; // Para [(ngModel)]
 import { employeesApi } from '../../features/employees/api'; // API para empleados
 import type { components } from '../../types/api'; // Tipos generados a partir de la API
 import { Pagination, type PageChangeEvent } from '../../components/pagination/pagination';
-import { AuthenticatedLayout } from '../../layouts/authenticated-layout/authenticated-layout';
 import { ChangeDetectorRef } from '@angular/core';
 
 // Tipos para clientes y parámetros de listado
@@ -24,7 +23,6 @@ import { email } from '@angular/forms/signals';
   imports: [
     CommonModule,
     FormsModule,
-    AuthenticatedLayout,
     EmployeesTable,
     SearchBar,
     Switch,
