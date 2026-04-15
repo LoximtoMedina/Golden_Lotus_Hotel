@@ -93,8 +93,8 @@
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         >
           <option [ngValue]="null" disabled>Selecciona un cliente</option>
-          <option *ngFor="let client of clients()" [ngValue]="client.id">
-            {{ client.name }}
+          <option *ngFor="let item of clients()" [ngValue]="item.id">
+            {{ item.name }}
           </option>
         </select>
       </div>

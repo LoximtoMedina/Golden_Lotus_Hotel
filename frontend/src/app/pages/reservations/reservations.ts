@@ -35,14 +35,7 @@ import { Switch } from '../../components/switch/switch';
 // Componente principal para la gestión de empleados
 @Component({
   selector: 'app-reservations',
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReservationsTable,
-    SearchBar,
-    Switch,
-    Pagination,
-  ],
+  imports: [CommonModule, FormsModule, ReservationsTable, SearchBar, Switch, Pagination],
   templateUrl: './reservations.html',
   styleUrls: ['./reservations.css'],
 })
@@ -77,10 +70,11 @@ export class reservations implements OnInit {
     // Cargar clientes para el formulario
     try {
       const clientResponse = await clientsApi.list({ page: 0, count: 100 });
-      const clientRows = clientResponse.data ?? [];
-      this.clients.set(clientRows.map((c) => ({ id: c.id, name: c.name })));
+      const rows = clientResponse.data ?? [];
+      this.clients.set(rows.map((c: any) => ({ id: c.id, name: c.name })));
+      this.cdr.detectChanges();
     } catch (error) {
-      console.log(error);
+      console.log('Error loading clients:', error);
     }
 
     // Cargar habitaciones para el formulario
@@ -90,6 +84,7 @@ export class reservations implements OnInit {
       this.rooms.set(
         roomRows.map((r) => ({ id: r.id, number: r.number, description: r.description })),
       );
+      this.cdr.detectChanges();
     } catch (error) {
       console.log(error);
     }

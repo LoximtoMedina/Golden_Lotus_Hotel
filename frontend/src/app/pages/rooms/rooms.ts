@@ -25,14 +25,7 @@ interface RoomTypeList {
 
 @Component({
   selector: 'app-rooms',
-  imports: [
-    CommonModule,
-    FormsModule,
-    RoomsTable,
-    SearchBar,
-    Switch,
-    Pagination,
-  ],
+  imports: [CommonModule, FormsModule, RoomsTable, SearchBar, Switch, Pagination],
   templateUrl: './rooms.html',
   styleUrls: ['./rooms.css'],
 })
@@ -40,7 +33,7 @@ interface RoomTypeList {
 // Componente principal para la gestión de habitaciones
 export class Rooms implements OnInit {
   // Estado del componente utilizando señales
-  rooms = signal<Room[]>([]);
+  rooms = signal<any>([]);
   loading = signal(false);
   error = signal('');
   total = signal(0);
