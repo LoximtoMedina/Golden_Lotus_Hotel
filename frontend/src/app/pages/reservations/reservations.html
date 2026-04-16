@@ -22,12 +22,33 @@
   (onButtonClick)="openAddModal()"
 ></app-search-bar>
 
+<div
+  *ngIf="error()"
+  class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+>
+  {{ error() }}
+</div>
+
+<div
+  *ngIf="loading()"
+  class="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700"
+>
+  Cargando reservaciones...
+</div>
+
 <app-reservations-table
   [records]="reservations()"
   (onEditButtonClick)="openEditModal($event)"
   (onDeleteButtonClick)="openDeleteModal($event)"
   (onRestoreButtonClick)="RestoreEntity($event)"
 />
+
+<div
+  *ngIf="!loading() && !error() && reservations().length === 0"
+  class="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+>
+  No se encontraron reservaciones con los filtros actuales.
+</div>
 
 <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700">
   <app-switch
@@ -74,7 +95,7 @@
       </button>
     </div>
 
-    <form class="max-h-[80vh] overflow-auto p-8 space-y-5">
+    <form class="max-h-[80vh] overflow-auto p-8 space-y-5" (ngSubmit)="submitForm()">
       <div *ngIf="isEditing" class="flex flex-col gap-1">
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">ID</label>
         <input
@@ -90,6 +111,7 @@
         <select
           [(ngModel)]="currentData.clientId"
           name="clientId"
+          required
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         >
           <option [ngValue]="null" disabled>Selecciona un cliente</option>
@@ -104,6 +126,7 @@
         <select
           [(ngModel)]="currentData.roomId"
           name="roomId"
+          required
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         >
           <option [ngValue]="null" disabled>Selecciona una habitación</option>
@@ -120,7 +143,7 @@
           name="status"
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         >
-          <option value="Pending" selected>Pendiente</option>
+          <option value="Pending">Pendiente</option>
           <option value="Confirmed">Confirmada</option>
           <option value="Cancelled">Cancelada</option>
           <option value="CheckedIn">Hospedado</option>
@@ -132,10 +155,10 @@
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">Fecha de Entrada</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.checkInDate?.slice(0, 16)"
-          (ngModelChange)="currentData.checkInDate = $event"
+          [(ngModel)]="currentData.checkInDate"
           placeholder="dd/mm/yyyy"
           name="checkInDate"
+          required
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
@@ -144,10 +167,10 @@
         <label class="text-xs font-bold text-gray-700 uppercase ml-1">Fecha de Salida</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.checkOutDate?.slice(0, 16)"
-          (ngModelChange)="currentData.checkOutDate = $event"
+          [(ngModel)]="currentData.checkOutDate"
           placeholder="dd/mm/yyyy"
           name="checkOutDate"
+          required
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
@@ -159,6 +182,9 @@
           [(ngModel)]="currentData.charge"
           placeholder="Monto"
           name="charge"
+          min="0"
+          step="0.01"
+          required
           class="w-full p-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
         />
       </div>
@@ -177,8 +203,7 @@
         <label class="text-xs font-bold text-gray-400 uppercase ml-1">Fecha de Creación</label>
         <input
           type="datetime-local"
-          [ngModel]="currentData.creationDate?.slice(0, 16)"
-          (ngModelChange)="currentData.creationDate = $event"
+          [value]="formatDateForInput(currentData.creationDate)"
           disabled
           name="creationDate"
           class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-gray-400 cursor-not-allowed"
@@ -195,7 +220,6 @@
         </button>
         <button
           type="submit"
-          (click)="isEditing ? updateEntity() : createEntity()"
           class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95"
         >
           {{ isEditing ? 'Guardar Cambios' : 'Registrar' }}

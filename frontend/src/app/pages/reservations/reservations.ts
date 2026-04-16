@@ -13,6 +13,7 @@ import { roomsApi } from '../../features/rooms/api';
 type reservation = components['schemas']['Reservation'];
 type Client = components['schemas']['Client'];
 type Room = components['schemas']['Room'];
+type ReservationStatus = reservation['status'];
 type PopulatedReservation = reservation & { client: Client; room: Room };
 type ListreservationsParams = Parameters<typeof reservationsApi.list>[0];
 
@@ -27,12 +28,24 @@ interface RoomList {
   description: string;
 }
 
+interface ReservationFormData {
+  id: number | null;
+  clientId: number | null;
+  roomId: number | null;
+  status: ReservationStatus;
+  checkInDate: string;
+  checkOutDate: string;
+  charge: number;
+  active: boolean;
+  creationDate: string;
+}
+
 // Components
 import { Table as ReservationsTable } from '../../features/reservations/components/table/table';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import { Switch } from '../../components/switch/switch';
 
-// Componente principal para la gestión de empleados
+// Componente principal para la gestión de reservaciones
 @Component({
   selector: 'app-reservations',
   imports: [CommonModule, FormsModule, ReservationsTable, SearchBar, Switch, Pagination],
@@ -40,8 +53,8 @@ import { Switch } from '../../components/switch/switch';
   styleUrls: ['./reservations.css'],
 })
 
-// Componente principal para la gestión de empleados
-export class reservations implements OnInit {
+// Componente principal para la gestión de reservaciones
+export class Reservations implements OnInit {
   // Estado del componente utilizando señales
   reservations = signal<PopulatedReservation[]>([]);
   loading = signal(false);
@@ -56,7 +69,7 @@ export class reservations implements OnInit {
   clients = signal<ClientList[]>([]);
   rooms = signal<RoomList[]>([]);
 
-  // Inicialización de la lista de clientes al cargar el componente
+  // Inicialización de la página al cargar el componente
   async ngOnInit(): Promise<void> {
     await this.list({
       page: this.page(),
@@ -72,7 +85,6 @@ export class reservations implements OnInit {
       const clientResponse = await clientsApi.list({ page: 0, count: 100 });
       const rows = clientResponse.data ?? [];
       this.clients.set(rows.map((c: any) => ({ id: c.id, name: c.name })));
-      this.cdr.detectChanges();
     } catch (error) {
       console.log('Error loading clients:', error);
     }
@@ -84,7 +96,6 @@ export class reservations implements OnInit {
       this.rooms.set(
         roomRows.map((r) => ({ id: r.id, number: r.number, description: r.description })),
       );
-      this.cdr.detectChanges();
     } catch (error) {
       console.log(error);
     }
@@ -163,61 +174,141 @@ export class reservations implements OnInit {
   showFormModal: boolean = false;
   showDeleteModal: boolean = false;
   isEditing: boolean = false;
-  EntityType: string = 'client';
+  EntityType: string = 'reservación';
 
   // 2. Objeto para el formulario
-  currentData: any = {
-    id: null,
-    clientId: null,
-    roomId: null,
-    status: 'Pending',
-    checkInDate: new Date(),
-    checkOutDate: new Date(),
-    charge: 0,
-    active: true,
-    creationDate: new Date(),
-  };
+  currentData: ReservationFormData = this.createInitialFormData();
 
-  // 3. Funciones para abrir/cerrar modals y preparar datos
-  openAddModal() {
-    this.isEditing = false;
-    this.currentData = {
+  private createInitialFormData(): ReservationFormData {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    return {
       id: null,
       clientId: null,
       roomId: null,
       status: 'Pending',
-      checkInDate: new Date(),
-      checkOutDate: new Date(),
+      checkInDate: this.toInputDateTime(now.toISOString()),
+      checkOutDate: this.toInputDateTime(tomorrow.toISOString()),
       charge: 0,
       active: true,
-      creationDate: new Date(),
+      creationDate: this.toInputDateTime(now.toISOString()),
     };
+  }
+
+  private toInputDateTime(value?: string | null): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    const timezoneOffsetMs = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - timezoneOffsetMs).toISOString().slice(0, 16);
+  }
+
+  formatDateForInput(value?: string | null): string {
+    return this.toInputDateTime(value);
+  }
+
+  private toIsoDate(value: string): string {
+    return new Date(value).toISOString();
+  }
+
+  private isSuccessStatus(status: unknown): boolean {
+    return typeof status === 'string' && status.toLowerCase() === 'success';
+  }
+
+  private validateCurrentData(): string | null {
+    if (!this.currentData.clientId) {
+      return 'Selecciona un cliente.';
+    }
+
+    if (!this.currentData.roomId) {
+      return 'Selecciona una habitación.';
+    }
+
+    if (!this.currentData.checkInDate || !this.currentData.checkOutDate) {
+      return 'Completa la fecha de entrada y salida.';
+    }
+
+    const checkIn = new Date(this.currentData.checkInDate);
+    const checkOut = new Date(this.currentData.checkOutDate);
+
+    if (Number.isNaN(checkIn.getTime()) || Number.isNaN(checkOut.getTime())) {
+      return 'Las fechas ingresadas no son válidas.';
+    }
+
+    if (checkOut <= checkIn) {
+      return 'La fecha de salida debe ser posterior a la fecha de entrada.';
+    }
+
+    if (this.currentData.charge < 0) {
+      return 'El cargo no puede ser negativo.';
+    }
+
+    return null;
+  }
+
+  // 3. Funciones para abrir/cerrar modals y preparar datos
+  openAddModal() {
+    this.isEditing = false;
+    this.currentData = this.createInitialFormData();
     this.showFormModal = true;
   }
 
-  async openEditModal(reservation: any) {
-    const result = await reservationsApi.get({ reservationIds: [reservation] });
+  async openEditModal(reservationId: number) {
+    try {
+      const result = await reservationsApi.get({ reservationIds: [reservationId] });
+      const reservation = result.data?.[0];
 
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.currentData = { ...result.data?.[0] };
+      if (!this.isSuccessStatus(result.status) || !reservation) {
+        alert('No se pudo cargar la reservación seleccionada.');
+        return;
+      }
+
+      this.currentData = {
+        ...reservation,
+        checkInDate: this.toInputDateTime(reservation.checkInDate),
+        checkOutDate: this.toInputDateTime(reservation.checkOutDate),
+        creationDate: this.toInputDateTime(reservation.creationDate),
+      };
 
       this.isEditing = true;
       this.showFormModal = true;
-
       this.cdr.detectChanges();
+    } catch (error) {
+      console.log(error);
+      alert('Error al cargar la reservación.');
     }
   }
 
-  async openDeleteModal(reservation: any) {
-    const result = await reservationsApi.get({ reservationIds: [reservation] });
+  async openDeleteModal(reservationId: number) {
+    try {
+      const result = await reservationsApi.get({ reservationIds: [reservationId] });
+      const reservation = result.data?.[0];
 
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.currentData = { ...result.data?.[0] };
+      if (!this.isSuccessStatus(result.status) || !reservation) {
+        alert('No se pudo cargar la reservación seleccionada.');
+        return;
+      }
+
+      this.currentData = {
+        ...reservation,
+        checkInDate: this.toInputDateTime(reservation.checkInDate),
+        checkOutDate: this.toInputDateTime(reservation.checkOutDate),
+        creationDate: this.toInputDateTime(reservation.creationDate),
+      };
       this.showDeleteModal = true;
 
       this.cdr.detectChanges();
+    } catch (error) {
+      console.log(error);
+      alert('Error al cargar la reservación.');
     }
   }
 
@@ -228,27 +319,51 @@ export class reservations implements OnInit {
 
   // Funciones de acción
 
+  async submitForm(): Promise<void> {
+    const validationError = this.validateCurrentData();
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    if (this.isEditing) {
+      await this.updateEntity();
+      return;
+    }
+
+    await this.createEntity();
+  }
+
   async updateEntity() {
     console.log(`Actualizando ${this.EntityType} ID:`, this.currentData);
 
-    const result = await reservationsApi.update({
-      reservationId: this.currentData.id,
-      clientId: this.currentData.clientId,
-      roomId: this.currentData.roomId,
-      status: this.currentData.status,
-      checkInDate: new Date(this.currentData.checkInDate).toISOString(),
-      checkOutDate: new Date(this.currentData.checkOutDate).toISOString(),
-      charge: this.currentData.charge,
-      active: true,
-    });
+    if (!this.currentData.id) {
+      alert('No se encontró el ID de la reservación.');
+      return;
+    }
 
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.closeModals();
-      alert('Reservación actualizada exitosamente');
-      await this.loadPage();
-    } else {
-      console.log(result);
+    try {
+      const result = await reservationsApi.update({
+        reservationId: this.currentData.id,
+        clientId: this.currentData.clientId!,
+        roomId: this.currentData.roomId!,
+        status: this.currentData.status,
+        checkInDate: this.toIsoDate(this.currentData.checkInDate),
+        checkOutDate: this.toIsoDate(this.currentData.checkOutDate),
+        charge: this.currentData.charge,
+        active: this.currentData.active,
+      });
+
+      if (this.isSuccessStatus(result.status)) {
+        this.closeModals();
+        alert('Reservación actualizada exitosamente');
+        await this.loadPage();
+      } else {
+        console.log(result);
+        alert('Error al actualizar la reservación');
+      }
+    } catch (error) {
+      console.log(error);
       alert('Error al actualizar la reservación');
     }
   }
@@ -256,22 +371,26 @@ export class reservations implements OnInit {
   async createEntity() {
     console.log(`Creando ${this.EntityType} ID:`, this.currentData);
 
-    const result = await reservationsApi.create({
-      clientId: this.currentData.clientId,
-      roomId: this.currentData.roomId,
-      status: this.currentData.status,
-      checkInDate: new Date(this.currentData.checkInDate).toISOString(),
-      checkOutDate: new Date(this.currentData.checkOutDate).toISOString(),
-      charge: this.currentData.charge,
-    });
+    try {
+      const result = await reservationsApi.create({
+        clientId: this.currentData.clientId!,
+        roomId: this.currentData.roomId!,
+        status: this.currentData.status,
+        checkInDate: this.toIsoDate(this.currentData.checkInDate),
+        checkOutDate: this.toIsoDate(this.currentData.checkOutDate),
+        charge: this.currentData.charge,
+      });
 
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.closeModals();
-      alert('Reservación creada exitosamente');
-      await this.loadPage();
-    } else {
-      console.log(result);
+      if (this.isSuccessStatus(result.status)) {
+        this.closeModals();
+        alert('Reservación creada exitosamente');
+        await this.loadPage();
+      } else {
+        console.log(result);
+        alert('Error al crear la reservación');
+      }
+    } catch (error) {
+      console.log(error);
       alert('Error al crear la reservación');
     }
   }
@@ -279,17 +398,26 @@ export class reservations implements OnInit {
   async deleteEntity() {
     console.log(`Eliminando ${this.EntityType} ID:`, this.currentData.id);
 
-    const result = await reservationsApi.delete({
-      reservationId: this.currentData.id,
-    });
+    if (!this.currentData.id) {
+      alert('No se encontró el ID de la reservación.');
+      return;
+    }
 
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.closeModals();
-      alert('Reservación eliminada exitosamente');
-      await this.loadPage();
-    } else {
-      console.log(result);
+    try {
+      const result = await reservationsApi.delete({
+        reservationId: this.currentData.id,
+      });
+
+      if (this.isSuccessStatus(result.status)) {
+        this.closeModals();
+        alert('Reservación eliminada exitosamente');
+        await this.loadPage();
+      } else {
+        console.log(result);
+        alert('Error al eliminar la reservación');
+      }
+    } catch (error) {
+      console.log(error);
       alert('Error al eliminar la reservación');
     }
   }
@@ -297,17 +425,24 @@ export class reservations implements OnInit {
   async RestoreEntity(reservationId: number) {
     console.log(`Restaurando ${reservationId}`);
 
-    const result = await reservationsApi.restore({
-      reservationId: reservationId,
-    });
-    // @ts-ignore
-    if (result.status === 'Success') {
-      this.closeModals();
-      alert('Reservación restaurada exitosamente');
-      await this.loadPage();
-    } else {
-      console.log(result);
+    try {
+      const result = await reservationsApi.restore({
+        reservationId: reservationId,
+      });
+
+      if (this.isSuccessStatus(result.status)) {
+        this.closeModals();
+        alert('Reservación restaurada exitosamente');
+        await this.loadPage();
+      } else {
+        console.log(result);
+        alert('Error al restaurar la reservación');
+      }
+    } catch (error) {
+      console.log(error);
       alert('Error al restaurar la reservación');
     }
   }
 }
+
+export { Reservations as reservations };
