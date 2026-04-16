@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import authApi from '../../features/auth/api';
 import type { components } from '../../types/api';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 type ApiStatus = components['schemas']['Status'];
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './login.html',
 })
 export class Login {
@@ -18,6 +20,14 @@ export class Login {
     email: '',
     password: '',
   };
+
+  faEyeIcon = faEyeSlash;
+  showPassword = false;
+  public toggleShowPassword(){
+    this.showPassword = !this.showPassword;
+    this.faEyeIcon = this.showPassword ? faEye : faEyeSlash;
+  }
+
 
   isLoading = signal(false);
   errorMessage = signal('');
